@@ -6,6 +6,13 @@ temp/
 *.log
 images/blog/
 
+# Fichiers de test et debug - NE JAMAIS METTRE EN PRODUCTION
+test-*.php
+test-*.html
+debug-*.php
+generate-*.php
+phpinfo.php
+
 # Fichiers de configuration locale
 config/local.php
 

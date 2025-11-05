@@ -121,6 +121,13 @@ if (!function_exists('uploadImage')) {
             return null;
         }
 
+        // Limite de taille : 5MB
+        $maxSize = 5 * 1024 * 1024;
+        if ($_FILES['image']['size'] > $maxSize) {
+            return null;
+        }
+
+        // Extensions autorisées
         $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
         $filename = $_FILES['image']['name'];
         $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
@@ -129,10 +136,29 @@ if (!function_exists('uploadImage')) {
             return null;
         }
 
+        // Vérification du MIME type
+        $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($finfo, $_FILES['image']['tmp_name']);
+        finfo_close($finfo);
+
+        if (!in_array($mimeType, $allowedMimes)) {
+            return null;
+        }
+
+        // Vérifier que c'est vraiment une image avec getimagesize
+        $imageInfo = @getimagesize($_FILES['image']['tmp_name']);
+        if ($imageInfo === false) {
+            return null;
+        }
+
+        // Nom de fichier sécurisé
         $newFilename = uniqid() . '_' . time() . '.' . $ext;
         $destination = IMAGES_DIR . $newFilename;
 
         if (move_uploaded_file($_FILES['image']['tmp_name'], $destination)) {
+            // Changer les permissions du fichier
+            chmod($destination, 0644);
             return $newFilename;
         }
 
