@@ -298,23 +298,25 @@
                 </div>
                 <form class="contact-form">
                     <h3>Demande de devis</h3>
+                    <!-- Honeypot anti-spam (caché) -->
+                    <input type="text" name="website" style="display:none" tabindex="-1" autocomplete="off">
                     <div class="form-row">
-                        <input type="text" placeholder="Nom complet *" required>
-                        <input type="text" placeholder="Entreprise">
+                        <input type="text" name="nom" placeholder="Nom complet *" required>
+                        <input type="text" name="entreprise" placeholder="Entreprise">
                     </div>
                     <div class="form-row">
-                        <input type="email" placeholder="Email *" required>
-                        <input type="tel" placeholder="Téléphone">
+                        <input type="email" name="email" placeholder="Email *" required>
+                        <input type="tel" name="telephone" placeholder="Téléphone">
                     </div>
-                    <select required>
+                    <select name="type_projet" required>
                         <option value="">Type de projet *</option>
-                        <option value="chaudronnerie">Chaudronnerie</option>
-                        <option value="tuyauterie">Tuyauterie industrielle</option>
-                        <option value="structure">Structure métallique</option>
-                        <option value="finition">Finitions</option>
-                        <option value="autre">Autre</option>
+                        <option value="Chaudronnerie">Chaudronnerie</option>
+                        <option value="Tuyauterie industrielle">Tuyauterie industrielle</option>
+                        <option value="Structure métallique">Structure métallique</option>
+                        <option value="Finitions">Finitions</option>
+                        <option value="Autre">Autre</option>
                     </select>
-                    <textarea placeholder="Décrivez votre projet *" rows="5" required></textarea>
+                    <textarea name="message" placeholder="Décrivez votre projet *" rows="5" required></textarea>
                     <button type="submit" class="btn btn-primary">Envoyer la demande</button>
                 </form>
             </div>

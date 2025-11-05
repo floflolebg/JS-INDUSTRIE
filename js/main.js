@@ -1,4 +1,135 @@
 // ===================================
+// Système de notifications
+// ===================================
+function showNotification(message, type = 'info') {
+    // Créer la notification
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <span class="notification-icon">${type === 'success' ? '✓' : type === 'error' ? '✗' : 'ℹ'}</span>
+            <span class="notification-message">${message}</span>
+        </div>
+        <button class="notification-close">&times;</button>
+    `;
+
+    // Ajouter les styles si ce n'est pas déjà fait
+    if (!document.getElementById('notification-styles')) {
+        const style = document.createElement('style');
+        style.id = 'notification-styles';
+        style.textContent = `
+            .notification {
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                min-width: 300px;
+                max-width: 500px;
+                padding: 1rem 1.5rem;
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                z-index: 10000;
+                animation: slideInRight 0.3s ease-out;
+            }
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+            }
+            .notification-success {
+                border-left: 4px solid #10b981;
+            }
+            .notification-error {
+                border-left: 4px solid #ef4444;
+            }
+            .notification-info {
+                border-left: 4px solid #1E5BA8;
+            }
+            .notification-content {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+            }
+            .notification-icon {
+                font-size: 1.5rem;
+                font-weight: bold;
+            }
+            .notification-success .notification-icon {
+                color: #10b981;
+            }
+            .notification-error .notification-icon {
+                color: #ef4444;
+            }
+            .notification-info .notification-icon {
+                color: #1E5BA8;
+            }
+            .notification-message {
+                color: #1f2937;
+                line-height: 1.5;
+            }
+            .notification-close {
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+                color: #6b7280;
+                cursor: pointer;
+                padding: 0;
+                margin-left: 1rem;
+                transition: color 0.3s;
+            }
+            .notification-close:hover {
+                color: #1f2937;
+            }
+            @media (max-width: 768px) {
+                .notification {
+                    left: 20px;
+                    right: 20px;
+                    min-width: auto;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // Ajouter au document
+    document.body.appendChild(notification);
+
+    // Fonction pour fermer la notification
+    const closeNotification = () => {
+        notification.style.animation = 'slideOutRight 0.3s ease-out';
+        setTimeout(() => {
+            if (notification.parentElement) {
+                notification.parentElement.removeChild(notification);
+            }
+        }, 300);
+    };
+
+    // Bouton de fermeture
+    notification.querySelector('.notification-close').addEventListener('click', closeNotification);
+
+    // Auto-fermeture après 5 secondes
+    setTimeout(closeNotification, 5000);
+}
+
+// ===================================
 // Navigation mobile
 // ===================================
 document.addEventListener('DOMContentLoaded', function() {
@@ -132,70 +263,125 @@ if (contactForm) {
     contactForm.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        // Récupérer les données du formulaire
-        const formData = new FormData(contactForm);
-
-        // Afficher un message de confirmation (à remplacer par un vrai envoi AJAX)
         const button = contactForm.querySelector('button[type="submit"]');
         const originalText = button.textContent;
+        const originalBgColor = button.style.backgroundColor;
 
+        // Désactiver le bouton et afficher le statut
         button.textContent = 'Envoi en cours...';
         button.disabled = true;
 
-        // Simuler l'envoi (à remplacer par un vrai appel API)
-        setTimeout(() => {
-            button.textContent = '✓ Message envoyé !';
-            button.style.backgroundColor = '#10b981';
+        // Récupérer les données du formulaire
+        const formData = new FormData(contactForm);
 
-            // Réinitialiser le formulaire
-            contactForm.reset();
+        // Envoyer les données via AJAX
+        fetch('contact.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Succès
+                button.textContent = '✓ Message envoyé !';
+                button.style.backgroundColor = '#10b981';
+
+                // Réinitialiser le formulaire
+                contactForm.reset();
+
+                // Afficher un message de succès
+                showNotification(data.message, 'success');
+            } else {
+                // Erreur
+                button.textContent = '✗ Erreur';
+                button.style.backgroundColor = '#ef4444';
+                showNotification(data.message || 'Une erreur est survenue', 'error');
+            }
 
             // Réinitialiser le bouton après 3 secondes
             setTimeout(() => {
                 button.textContent = originalText;
-                button.style.backgroundColor = '';
+                button.style.backgroundColor = originalBgColor;
                 button.disabled = false;
             }, 3000);
-        }, 1500);
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            button.textContent = '✗ Erreur réseau';
+            button.style.backgroundColor = '#ef4444';
+            showNotification('Erreur de connexion. Veuillez vérifier votre connexion internet.', 'error');
+
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.style.backgroundColor = originalBgColor;
+                button.disabled = false;
+            }, 3000);
+        });
     });
 }
 
 // ===================================
 // Formulaire newsletter
 // ===================================
-const newsletterForm = document.querySelector('.newsletter-form');
-if (newsletterForm) {
+const newsletterForms = document.querySelectorAll('.newsletter-form');
+newsletterForms.forEach(newsletterForm => {
     newsletterForm.addEventListener('submit', function(e) {
         e.preventDefault();
 
         const emailInput = newsletterForm.querySelector('input[type="email"]');
         const button = newsletterForm.querySelector('button[type="submit"]');
         const originalText = button.textContent;
+        const originalBgColor = button.style.backgroundColor;
 
         if (!emailInput.value) {
+            showNotification('Veuillez entrer une adresse email', 'error');
             return;
         }
 
         button.textContent = 'Inscription...';
         button.disabled = true;
 
-        // Simuler l'inscription (à remplacer par un vrai appel API)
-        setTimeout(() => {
-            button.textContent = '✓ Inscrit !';
-            button.style.backgroundColor = '#10b981';
+        // Récupérer les données du formulaire
+        const formData = new FormData(newsletterForm);
 
-            // Réinitialiser le formulaire
-            newsletterForm.reset();
+        // Envoyer les données via AJAX
+        fetch('newsletter.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                button.textContent = '✓ Inscrit !';
+                button.style.backgroundColor = '#10b981';
+                newsletterForm.reset();
+                showNotification(data.message, 'success');
+            } else {
+                button.textContent = '✗ Erreur';
+                button.style.backgroundColor = '#ef4444';
+                showNotification(data.message || 'Une erreur est survenue', 'error');
+            }
 
-            // Réinitialiser le bouton après 3 secondes
             setTimeout(() => {
                 button.textContent = originalText;
-                button.style.backgroundColor = '';
+                button.style.backgroundColor = originalBgColor;
                 button.disabled = false;
             }, 3000);
-        }, 1500);
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            button.textContent = '✗ Erreur';
+            button.style.backgroundColor = '#ef4444';
+            showNotification('Erreur de connexion', 'error');
+
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.style.backgroundColor = originalBgColor;
+                button.disabled = false;
+            }, 3000);
+        });
     });
-}
+});
 
 // ===================================
 // Animation au scroll (Intersection Observer)
