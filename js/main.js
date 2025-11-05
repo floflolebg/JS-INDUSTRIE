@@ -384,31 +384,46 @@ newsletterForms.forEach(newsletterForm => {
 });
 
 // ===================================
-// Animation au scroll (Intersection Observer)
+// Animation au scroll améliorée (Intersection Observer)
 // ===================================
 const observerOptions = {
     threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
+    rootMargin: '0px 0px -100px 0px'
 };
 
-const observer = new IntersectionObserver(function(entries) {
+const scrollObserver = new IntersectionObserver(function(entries) {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
+            entry.target.classList.add('animate');
+            // Ne plus observer une fois animé
+            scrollObserver.unobserve(entry.target);
         }
     });
 }, observerOptions);
 
-// Observer les cartes de services, réalisations et blog
+// Observer les éléments avec animations
 document.addEventListener('DOMContentLoaded', function() {
-    const animatedElements = document.querySelectorAll('.service-card, .realisation-card, .blog-card, .stat-box');
+    // Sélectionner tous les éléments à animer
+    const fadeInElements = document.querySelectorAll('.section-title, .section-subtitle');
+    const slideUpElements = document.querySelectorAll('.service-card, .realisation-card, .blog-card');
+    const scaleInElements = document.querySelectorAll('.stat-box');
 
-    animatedElements.forEach(element => {
-        element.style.opacity = '0';
-        element.style.transform = 'translateY(30px)';
-        element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(element);
+    // Ajouter les classes d'animation
+    fadeInElements.forEach(el => {
+        el.classList.add('fade-in');
+        scrollObserver.observe(el);
+    });
+
+    slideUpElements.forEach((el, index) => {
+        el.classList.add('slide-up');
+        el.style.transitionDelay = `${index * 0.1}s`;
+        scrollObserver.observe(el);
+    });
+
+    scaleInElements.forEach((el, index) => {
+        el.classList.add('scale-in');
+        el.style.transitionDelay = `${index * 0.15}s`;
+        scrollObserver.observe(el);
     });
 });
 
@@ -499,6 +514,95 @@ const statsSection = document.querySelector('.apropos-stats');
 if (statsSection) {
     statsObserver.observe(statsSection);
 }
+
+// ===================================
+// Particules étincelles dans le hero
+// ===================================
+function createSparks() {
+    const hero = document.querySelector('.hero');
+    if (!hero) return;
+
+    const sparksContainer = document.createElement('div');
+    sparksContainer.className = 'sparks-container';
+    sparksContainer.style.cssText = `
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 2;
+        overflow: hidden;
+    `;
+    hero.appendChild(sparksContainer);
+
+    // Créer 30 particules
+    for (let i = 0; i < 30; i++) {
+        const spark = document.createElement('div');
+        spark.className = 'spark';
+
+        const size = Math.random() * 4 + 2;
+        const duration = Math.random() * 3 + 2;
+        const delay = Math.random() * 5;
+        const startX = Math.random() * 100;
+        const endX = startX + (Math.random() * 30 - 15);
+
+        spark.style.cssText = `
+            position: absolute;
+            width: ${size}px;
+            height: ${size}px;
+            background: ${Math.random() > 0.5 ? '#FFA500' : '#FFD700'};
+            border-radius: 50%;
+            left: ${startX}%;
+            bottom: -10px;
+            opacity: 0;
+            box-shadow: 0 0 ${size * 2}px ${Math.random() > 0.5 ? '#FFA500' : '#FFD700'};
+            animation: sparkRise ${duration}s ease-in ${delay}s infinite;
+        `;
+
+        sparksContainer.appendChild(spark);
+    }
+
+    // Ajouter l'animation CSS
+    if (!document.getElementById('spark-animation')) {
+        const style = document.createElement('style');
+        style.id = 'spark-animation';
+        style.textContent = `
+            @keyframes sparkRise {
+                0% {
+                    transform: translateY(0) translateX(0) scale(1);
+                    opacity: 0;
+                }
+                10% {
+                    opacity: 1;
+                }
+                90% {
+                    opacity: 0.8;
+                }
+                100% {
+                    transform: translateY(-800px) translateX(${Math.random() * 100 - 50}px) scale(0);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+}
+
+// Initialiser les particules au chargement
+document.addEventListener('DOMContentLoaded', createSparks);
+
+// ===================================
+// Effet de brillance sur les boutons
+// ===================================
+document.addEventListener('DOMContentLoaded', function() {
+    const buttons = document.querySelectorAll('.btn-primary');
+    buttons.forEach(btn => {
+        btn.addEventListener('mouseenter', function() {
+            this.style.animation = 'pulse 0.6s ease-in-out';
+        });
+        btn.addEventListener('animationend', function() {
+            this.style.animation = '';
+        });
+    });
+});
 
 // ===================================
 // Console message
