@@ -22,6 +22,22 @@ if (!defined('IMAGES_DIR')) {
     define('IMAGES_DIR', 'images/blog/');
 }
 
+// Polyfill pour password_hash et password_verify (PHP 5.4 compatibility)
+if (!function_exists('password_hash')) {
+    function password_hash($password, $algo, $options = array()) {
+        $cost = isset($options['cost']) ? $options['cost'] : 12;
+        $salt = sprintf('$2y$%02d$', $cost);
+        $salt .= substr(str_replace('+', '.', base64_encode(openssl_random_pseudo_bytes(16))), 0, 22);
+        return crypt($password, $salt);
+    }
+}
+
+if (!function_exists('password_verify')) {
+    function password_verify($password, $hash) {
+        return crypt($password, $hash) === $hash;
+    }
+}
+
 // Hash du mot de passe admin (bcrypt)
 // Mot de passe: js-industrie-admin-2024
 if (!defined('ADMIN_PASSWORD_HASH')) {
