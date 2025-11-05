@@ -147,7 +147,12 @@ if ($method === 'POST' && $action === 'create') {
 
     if (empty($title) || empty($category) || empty($excerpt) || empty($content)) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'message' => 'Champs requis manquants']);
+        echo json_encode(['success' => false, 'message' => 'Champs requis manquants', 'debug' => [
+            'title' => !empty($title),
+            'category' => !empty($category),
+            'excerpt' => !empty($excerpt),
+            'content' => !empty($content)
+        ]]);
         exit;
     }
 
@@ -169,9 +174,17 @@ if ($method === 'POST' && $action === 'create') {
     ];
 
     $articles[] = $newArticle;
-    saveArticles($articles);
 
-    echo json_encode(['success' => true, 'message' => 'Article créé', 'article' => $newArticle]);
+    // Tenter de sauvegarder
+    $saved = saveArticles($articles);
+
+    if ($saved === false) {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'message' => 'Impossible d\'écrire dans data/articles.json. Vérifiez les permissions.']);
+        exit;
+    }
+
+    echo json_encode(['success' => true, 'message' => 'Article créé avec succès', 'article' => $newArticle]);
     exit;
 }
 

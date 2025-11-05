@@ -168,6 +168,16 @@ document.getElementById('articleForm').addEventListener('submit', async function
             body: formData
         });
 
+        // Vérifier si la réponse est du JSON valide
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            // La réponse n'est pas du JSON, probablement une erreur PHP
+            const text = await response.text();
+            console.error('Réponse non-JSON reçue:', text);
+            showAlert('Erreur serveur. Ouvrez la console (F12) pour voir les détails.', 'error');
+            return;
+        }
+
         const data = await response.json();
 
         if (data.success) {
@@ -176,9 +186,11 @@ document.getElementById('articleForm').addEventListener('submit', async function
             loadArticles();
         } else {
             showAlert(data.message || 'Erreur lors de l\'enregistrement', 'error');
+            console.error('Erreur API:', data);
         }
     } catch (error) {
-        showAlert('Erreur réseau', 'error');
+        console.error('Erreur complète:', error);
+        showAlert('Erreur réseau : ' + error.message, 'error');
     }
 });
 
