@@ -264,7 +264,9 @@
                     <p>Inscrivez-vous à notre newsletter pour recevoir nos dernières actualités et conseils d'experts</p>
                 </div>
                 <form class="newsletter-form">
-                    <input type="email" placeholder="Votre adresse email" required>
+                    <!-- Honeypot anti-spam (caché) -->
+                    <input type="text" name="url" style="display:none" tabindex="-1" autocomplete="off">
+                    <input type="email" name="email" placeholder="Votre adresse email" required>
                     <button type="submit" class="btn btn-primary">S'inscrire</button>
                 </form>
             </div>
