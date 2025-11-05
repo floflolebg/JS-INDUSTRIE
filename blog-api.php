@@ -1,5 +1,10 @@
 <?php
 // API pour gérer les articles de blog
+// Désactiver l'affichage des erreurs pour éviter de casser le JSON
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
 header('Content-Type: application/json; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
@@ -34,9 +39,25 @@ function saveArticles($articles) {
     return file_put_contents(ARTICLES_FILE, json_encode($articles, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 }
 
+// Fonction pour récupérer les headers (compatible tous serveurs)
+function getAllHeaders() {
+    if (function_exists('getallheaders')) {
+        return getallheaders();
+    }
+
+    // Fallback pour les serveurs qui n'ont pas getallheaders()
+    $headers = [];
+    foreach ($_SERVER as $name => $value) {
+        if (substr($name, 0, 5) == 'HTTP_') {
+            $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+        }
+    }
+    return $headers;
+}
+
 // Fonction pour vérifier le mot de passe
 function checkAuth() {
-    $headers = getallheaders();
+    $headers = getAllHeaders();
     $password = isset($headers['X-Admin-Password']) ? $headers['X-Admin-Password'] :
                 (isset($_POST['password']) ? $_POST['password'] : '');
 
