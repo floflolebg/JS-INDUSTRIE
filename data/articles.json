@@ -1,0 +1,38 @@
+[
+  {
+    "id": "67292e1f7a3c8",
+    "slug": "nouvelles-normes-securite-2024",
+    "title": "Les nouvelles normes de sécurité en chaudronnerie 2024",
+    "category": "securite",
+    "excerpt": "Découvrez les nouvelles réglementations 2024 concernant la sécurité dans les ateliers de chaudronnerie et leurs impacts sur nos pratiques professionnelles.",
+    "content": "<h2>Introduction</h2><p>Les normes de sécurité évoluent constamment dans le secteur de la chaudronnerie. Découvrez les nouvelles réglementations 2024.</p><h3>Équipements de Protection</h3><p>Les nouvelles normes renforcent les exigences en matière d'EPI pour tous les opérateurs.</p>",
+    "author": "Jean Dupont",
+    "image": null,
+    "date": "2024-10-15 10:30:00",
+    "views": 0
+  },
+  {
+    "id": "67292e1f7a3c9",
+    "slug": "innovation-soudage-robotise",
+    "title": "Innovation : Le soudage robotisé",
+    "category": "technique",
+    "excerpt": "Comment la robotisation transforme les méthodes de soudage et améliore la qualité des assemblages métalliques dans l'industrie moderne.",
+    "content": "<h2>La révolution robotique</h2><p>Le soudage robotisé représente une avancée majeure pour notre secteur. Cette technologie améliore considérablement la précision et la répétabilité.</p>",
+    "author": "Marie Martin",
+    "image": null,
+    "date": "2024-10-08 14:15:00",
+    "views": 0
+  },
+  {
+    "id": "67292e1f7a3d0",
+    "slug": "projet-industrie-agroalimentaire",
+    "title": "Retour sur notre projet pour l'industrie agroalimentaire",
+    "category": "projets",
+    "excerpt": "Un projet d'envergure vient de se terminer avec succès : l'installation complète d'équipements de chaudronnerie pour une grande entreprise agroalimentaire.",
+    "content": "<h2>Le projet</h2><p>Ce projet comprenait la fabrication de cuves de stockage, l'installation de tuyauterie en inox 316L, et la mise en place d'un système de nettoyage automatisé.</p>",
+    "author": "Pierre Leroy",
+    "image": null,
+    "date": "2024-10-01 09:00:00",
+    "views": 0
+  }
+]
