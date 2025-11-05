@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Blog JS Industrie - Actualités, conseils et innovations en chaudronnerie">
+    <title>Blog - JS Industrie</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header et Navigation -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <h1>JS INDUSTRIE</h1>
+                    <p class="tagline">Chaudronnerie Industrielle</p>
+                </div>
+                <button class="nav-toggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu">
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="index.html#services">Services</a></li>
+                    <li><a href="index.html#realisations">Réalisations</a></li>
+                    <li><a href="index.html#apropos">À propos</a></li>
+                    <li><a href="blog.html" class="active">Blog</a></li>
+                    <li><a href="index.html#contact">Contact</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Blog & Actualités</h1>
+            <p>Découvrez nos dernières réalisations, actualités du secteur et conseils d'experts</p>
+        </div>
+    </section>
+
+    <!-- Blog Filters -->
+    <section class="blog-filters section-gray">
+        <div class="container">
+            <div class="filters">
+                <button class="filter-btn active" data-category="all">Tous les articles</button>
+                <button class="filter-btn" data-category="actualites">Actualités</button>
+                <button class="filter-btn" data-category="projets">Projets</button>
+                <button class="filter-btn" data-category="technique">Technique</button>
+                <button class="filter-btn" data-category="securite">Sécurité</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Articles -->
+    <section class="blog-section section">
+        <div class="container">
+            <div class="blog-grid-full">
+                <!-- Article 1 -->
+                <article class="blog-card-full" data-category="securite">
+                    <div class="blog-image-full" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <span class="blog-category">Sécurité</span>
+                    </div>
+                    <div class="blog-content-full">
+                        <div class="blog-meta">
+                            <span class="blog-date">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                15 Octobre 2024
+                            </span>
+                            <span class="blog-author">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                                Par Jean Dupont
+                            </span>
+                        </div>
+                        <h2>Les nouvelles normes de sécurité en chaudronnerie 2024</h2>
+                        <p>Les normes de sécurité évoluent constamment dans le secteur de la chaudronnerie. Découvrez les nouvelles réglementations 2024 qui impactent nos méthodes de travail et garantissent une sécurité optimale pour nos équipes et nos clients.</p>
+                        <p>Cette année marque un tournant avec l'introduction de nouvelles directives européennes concernant la manipulation de matériaux lourds, les équipements de protection individuelle et les procédures de soudage...</p>
+                        <a href="blog/articles/normes-securite-2024.html" class="btn btn-secondary">Lire l'article complet →</a>
+                    </div>
+                </article>
+
+                <!-- Article 2 -->
+                <article class="blog-card-full" data-category="technique">
+                    <div class="blog-image-full" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <span class="blog-category">Innovation</span>
+                    </div>
+                    <div class="blog-content-full">
+                        <div class="blog-meta">
+                            <span class="blog-date">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                8 Octobre 2024
+                            </span>
+                            <span class="blog-author">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                                Par Marie Martin
+                            </span>
+                        </div>
+                        <h2>Innovation : Le soudage robotisé transforme l'industrie</h2>
+                        <p>La robotisation du soudage représente une révolution majeure dans notre secteur. Cette technologie améliore considérablement la précision, la répétabilité et la qualité des assemblages métalliques.</p>
+                        <p>Nous avons récemment investi dans des équipements de pointe qui nous permettent de proposer des prestations encore plus performantes à nos clients. Découvrez comment cette innovation bénéficie à vos projets...</p>
+                        <a href="blog/articles/soudage-robotise.html" class="btn btn-secondary">Lire l'article complet →</a>
+                    </div>
+                </article>
+
+                <!-- Article 3 -->
+                <article class="blog-card-full" data-category="projets">
+                    <div class="blog-image-full" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        <span class="blog-category">Projet</span>
+                    </div>
+                    <div class="blog-content-full">
+                        <div class="blog-meta">
+                            <span class="blog-date">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                1 Octobre 2024
+                            </span>
+                            <span class="blog-author">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                                Par Pierre Leroy
+                            </span>
+                        </div>
+                        <h2>Retour sur notre projet pour l'industrie agroalimentaire</h2>
+                        <p>Un projet d'envergure vient de se terminer avec succès : l'installation complète d'équipements de chaudronnerie pour une grande entreprise agroalimentaire française. Un défi technique relevé avec brio par nos équipes.</p>
+                        <p>Ce projet comprenait la fabrication de cuves de stockage, l'installation de tuyauterie en inox 316L, et la mise en place d'un système de nettoyage automatisé conforme aux normes sanitaires les plus strictes...</p>
+                        <a href="blog/articles/projet-agroalimentaire.html" class="btn btn-secondary">Lire l'article complet →</a>
+                    </div>
+                </article>
+
+                <!-- Article 4 -->
+                <article class="blog-card-full" data-category="actualites">
+                    <div class="blog-image-full" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                        <span class="blog-category">Actualités</span>
+                    </div>
+                    <div class="blog-content-full">
+                        <div class="blog-meta">
+                            <span class="blog-date">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                25 Septembre 2024
+                            </span>
+                            <span class="blog-author">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                                Par JS Industrie
+                            </span>
+                        </div>
+                        <h2>JS Industrie agrandit ses installations</h2>
+                        <p>Grande nouvelle pour JS Industrie ! Nous sommes fiers d'annoncer l'agrandissement de nos ateliers avec 500m² supplémentaires d'espace de production. Cette expansion nous permettra de mieux vous servir et de prendre en charge des projets encore plus ambitieux.</p>
+                        <p>Les nouveaux équipements incluent une presse plieuse de dernière génération, un nouveau pont roulant de 10 tonnes, et une zone dédiée au contrôle qualité...</p>
+                        <a href="#" class="btn btn-secondary">Lire l'article complet →</a>
+                    </div>
+                </article>
+
+                <!-- Article 5 -->
+                <article class="blog-card-full" data-category="technique">
+                    <div class="blog-image-full" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">
+                        <span class="blog-category">Technique</span>
+                    </div>
+                    <div class="blog-content-full">
+                        <div class="blog-meta">
+                            <span class="blog-date">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                18 Septembre 2024
+                            </span>
+                            <span class="blog-author">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                                Par Sophie Bernard
+                            </span>
+                        </div>
+                        <h2>Guide : Choisir le bon acier pour votre projet</h2>
+                        <p>Le choix du matériau est crucial pour la réussite de tout projet de chaudronnerie. Acier inoxydable, acier carbone, aluminium... Chaque matériau a ses propriétés spécifiques et ses applications privilégiées.</p>
+                        <p>Dans ce guide complet, nous vous aidons à comprendre les différences entre les principaux types d'acier et à choisir le matériau le plus adapté à vos besoins techniques et budgétaires...</p>
+                        <a href="#" class="btn btn-secondary">Lire l'article complet →</a>
+                    </div>
+                </article>
+
+                <!-- Article 6 -->
+                <article class="blog-card-full" data-category="projets">
+                    <div class="blog-image-full" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+                        <span class="blog-category">Projet</span>
+                    </div>
+                    <div class="blog-content-full">
+                        <div class="blog-meta">
+                            <span class="blog-date">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                10 Septembre 2024
+                            </span>
+                            <span class="blog-author">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                                Par Marc Dubois
+                            </span>
+                        </div>
+                        <h2>Structure métallique : Centre logistique de 3000m²</h2>
+                        <p>Découvrez en images la réalisation d'une structure métallique complexe pour un centre logistique de 3000m². Un projet qui a mobilisé nos équipes pendant 4 mois et qui démontre notre expertise en construction métallique.</p>
+                        <p>Ce projet incluait la conception sur mesure, la fabrication en atelier, et le montage sur site d'une charpente métallique avec bardage, mezzanine de 800m², et intégration de systèmes de levage...</p>
+                        <a href="#" class="btn btn-secondary">Lire l'article complet →</a>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination">
+                <button class="pagination-btn active">1</button>
+                <button class="pagination-btn">2</button>
+                <button class="pagination-btn">3</button>
+                <button class="pagination-btn">→</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter section section-gray">
+        <div class="container">
+            <div class="newsletter-content">
+                <div class="newsletter-text">
+                    <h2>Restez informés</h2>
+                    <p>Inscrivez-vous à notre newsletter pour recevoir nos dernières actualités et conseils d'experts</p>
+                </div>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Votre adresse email" required>
+                    <button type="submit" class="btn btn-primary">S'inscrire</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>JS INDUSTRIE</h3>
+                    <p>Expert en chaudronnerie industrielle depuis plus de 10 ans.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Navigation</h4>
+                    <ul>
+                        <li><a href="index.html">Accueil</a></li>
+                        <li><a href="index.html#services">Services</a></li>
+                        <li><a href="index.html#realisations">Réalisations</a></li>
+                        <li><a href="blog.html">Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="index.html#services">Chaudronnerie</a></li>
+                        <li><a href="index.html#services">Tuyauterie</a></li>
+                        <li><a href="index.html#services">Structures métalliques</a></li>
+                        <li><a href="index.html#services">Finitions</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li>+33 X XX XX XX XX</li>
+                        <li>contact@js-industrie.fr</li>
+                        <li>Zone Industrielle</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 JS Industrie - Tous droits réservés</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
