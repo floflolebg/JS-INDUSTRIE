@@ -29,6 +29,7 @@
 
 html {
     scroll-behavior: smooth;
+    scroll-padding-top: 100px; /* Compense le header fixe lors du scroll vers ancres */
 }
 
 body {
@@ -62,7 +63,7 @@ body {
     position: fixed;
     width: 100%;
     top: 0;
-    z-index: 1000;
+    z-index: 9999;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 

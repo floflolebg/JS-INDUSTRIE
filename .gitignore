@@ -1,7 +1,10 @@
 # Fichiers de données sensibles
 newsletter_subscribers.csv
+data/articles.json
+data/
 temp/
 *.log
+images/blog/
 
 # Fichiers de configuration locale
 config/local.php
