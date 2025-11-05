@@ -84,6 +84,19 @@ function uploadImage() {
 $method = $_SERVER['REQUEST_METHOD'];
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 
+// POST /blog-api.php?action=login
+if ($method === 'POST' && $action === 'login') {
+    $password = isset($_POST['password']) ? $_POST['password'] : '';
+
+    if ($password === ADMIN_PASSWORD) {
+        echo json_encode(['success' => true, 'message' => 'Connexion réussie']);
+    } else {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'message' => 'Mot de passe incorrect']);
+    }
+    exit;
+}
+
 // GET /blog-api.php?action=list
 if ($method === 'GET' && $action === 'list') {
     $articles = getArticles();

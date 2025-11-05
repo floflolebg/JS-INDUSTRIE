@@ -7,10 +7,18 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     e.preventDefault();
 
     const password = document.getElementById('password').value;
+    const errorDiv = document.getElementById('loginError');
 
-    // Test de connexion en essayant de lister les articles
+    // Vérification du mot de passe
+    const formData = new FormData();
+    formData.append('password', password);
+
     try {
-        const response = await fetch('blog-api.php?action=list');
+        const response = await fetch('blog-api.php?action=login', {
+            method: 'POST',
+            body: formData
+        });
+
         const data = await response.json();
 
         if (data.success) {
@@ -18,10 +26,13 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('adminContainer').style.display = 'block';
             loadArticles();
+        } else {
+            errorDiv.textContent = data.message || 'Mot de passe incorrect';
+            errorDiv.style.display = 'block';
         }
     } catch (error) {
-        document.getElementById('loginError').textContent = 'Erreur de connexion';
-        document.getElementById('loginError').style.display = 'block';
+        errorDiv.textContent = 'Erreur de connexion au serveur';
+        errorDiv.style.display = 'block';
     }
 });
 
