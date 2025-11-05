@@ -1,8 +1,8 @@
 <?php
 // Configuration
-define('CONTACT_EMAIL', 'contact@js-industrie.fr'); // Email de réception
+define('CONTACT_EMAIL', 'flo.lonjarret@gmail.com'); // Email de réception
 define('SITE_NAME', 'JS Industrie');
-define('FROM_EMAIL', 'noreply@js-industrie.fr'); // Email d'envoi
+define('FROM_EMAIL', 'flo.lonjarret@gmail.com'); // Email d'envoi
 
 // Headers de sécurité
 header('Content-Type: application/json; charset=utf-8');
