@@ -1,9 +1,13 @@
 <?php
 // API pour gérer les articles de blog
 // Désactiver l'affichage des erreurs pour éviter de casser le JSON
-error_reporting(E_ALL);
-ini_set('display_errors', 0);
+@ini_set('display_errors', 0);
+@ini_set('display_startup_errors', 0);
+error_reporting(0);
 ini_set('log_errors', 1);
+
+// Définir le timezone pour éviter les warnings
+date_default_timezone_set('Europe/Paris');
 
 header('Content-Type: application/json; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
@@ -11,11 +15,17 @@ header('X-Frame-Options: DENY');
 header('X-XSS-Protection: 1; mode=block');
 
 // Fichier de stockage des articles
-define('ARTICLES_FILE', 'data/articles.json');
-define('IMAGES_DIR', 'images/blog/');
+if (!defined('ARTICLES_FILE')) {
+    define('ARTICLES_FILE', 'data/articles.json');
+}
+if (!defined('IMAGES_DIR')) {
+    define('IMAGES_DIR', 'images/blog/');
+}
 
 // Mot de passe admin (à changer !)
-define('ADMIN_PASSWORD', 'js-industrie-admin-2024');
+if (!defined('ADMIN_PASSWORD')) {
+    define('ADMIN_PASSWORD', 'js-industrie-admin-2024');
+}
 
 // Créer les dossiers si nécessaires
 if (!file_exists('data')) {
@@ -26,79 +36,91 @@ if (!file_exists(IMAGES_DIR)) {
 }
 
 // Fonction pour lire les articles
-function getArticles() {
-    if (!file_exists(ARTICLES_FILE)) {
-        return [];
+if (!function_exists('getArticles')) {
+    function getArticles() {
+        if (!file_exists(ARTICLES_FILE)) {
+            return [];
+        }
+        $json = file_get_contents(ARTICLES_FILE);
+        return json_decode($json, true) ?: [];
     }
-    $json = file_get_contents(ARTICLES_FILE);
-    return json_decode($json, true) ?: [];
 }
 
 // Fonction pour sauvegarder les articles
-function saveArticles($articles) {
-    return file_put_contents(ARTICLES_FILE, json_encode($articles, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+if (!function_exists('saveArticles')) {
+    function saveArticles($articles) {
+        return file_put_contents(ARTICLES_FILE, json_encode($articles, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+    }
 }
 
 // Fonction pour récupérer les headers (compatible tous serveurs)
-function getAllHeaders() {
-    if (function_exists('getallheaders')) {
-        return getallheaders();
-    }
-
-    // Fallback pour les serveurs qui n'ont pas getallheaders()
-    $headers = [];
-    foreach ($_SERVER as $name => $value) {
-        if (substr($name, 0, 5) == 'HTTP_') {
-            $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+if (!function_exists('getAllHeaders')) {
+    function getAllHeaders() {
+        if (function_exists('getallheaders')) {
+            return getallheaders();
         }
+
+        // Fallback pour les serveurs qui n'ont pas getallheaders()
+        $headers = [];
+        foreach ($_SERVER as $name => $value) {
+            if (substr($name, 0, 5) == 'HTTP_') {
+                $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+            }
+        }
+        return $headers;
     }
-    return $headers;
 }
 
 // Fonction pour vérifier le mot de passe
-function checkAuth() {
-    $headers = getAllHeaders();
-    $password = isset($headers['X-Admin-Password']) ? $headers['X-Admin-Password'] :
-                (isset($_POST['password']) ? $_POST['password'] : '');
+if (!function_exists('checkAuth')) {
+    function checkAuth() {
+        $headers = getAllHeaders();
+        $password = isset($headers['X-Admin-Password']) ? $headers['X-Admin-Password'] :
+                    (isset($_POST['password']) ? $_POST['password'] : '');
 
-    if ($password !== ADMIN_PASSWORD) {
-        http_response_code(401);
-        echo json_encode(['success' => false, 'message' => 'Non autorisé']);
-        exit;
+        if ($password !== ADMIN_PASSWORD) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'message' => 'Non autorisé']);
+            exit;
+        }
     }
 }
 
 // Fonction pour générer un slug
-function generateSlug($title) {
-    $slug = strtolower($title);
-    $slug = preg_replace('/[^a-z0-9\s-]/', '', $slug);
-    $slug = preg_replace('/[\s]+/', '-', $slug);
-    $slug = trim($slug, '-');
-    return $slug;
+if (!function_exists('generateSlug')) {
+    function generateSlug($title) {
+        $slug = strtolower($title);
+        $slug = preg_replace('/[^a-z0-9\s-]/', '', $slug);
+        $slug = preg_replace('/[\s]+/', '-', $slug);
+        $slug = trim($slug, '-');
+        return $slug;
+    }
 }
 
 // Fonction pour uploader une image
-function uploadImage() {
-    if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
+if (!function_exists('uploadImage')) {
+    function uploadImage() {
+        if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
+            return null;
+        }
+
+        $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        $filename = $_FILES['image']['name'];
+        $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+
+        if (!in_array($ext, $allowed)) {
+            return null;
+        }
+
+        $newFilename = uniqid() . '_' . time() . '.' . $ext;
+        $destination = IMAGES_DIR . $newFilename;
+
+        if (move_uploaded_file($_FILES['image']['tmp_name'], $destination)) {
+            return $newFilename;
+        }
+
         return null;
     }
-
-    $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-    $filename = $_FILES['image']['name'];
-    $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-
-    if (!in_array($ext, $allowed)) {
-        return null;
-    }
-
-    $newFilename = uniqid() . '_' . time() . '.' . $ext;
-    $destination = IMAGES_DIR . $newFilename;
-
-    if (move_uploaded_file($_FILES['image']['tmp_name'], $destination)) {
-        return $newFilename;
-    }
-
-    return null;
 }
 
 // Router
