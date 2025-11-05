@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Authentification - JS Industrie</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #1E5BA8;
+        }
+        h2 {
+            color: #111827;
+            border-bottom: 2px solid #FFA500;
+            padding-bottom: 10px;
+        }
+        button {
+            background: #1E5BA8;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #0d3a6e;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+        .info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #3b82f6;
+        }
+        input {
+            padding: 10px;
+            width: 300px;
+            border: 2px solid #d1d5db;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Test du Système d'Authentification</h1>
+
+    <div class="test-section">
+        <h2>Étape 1 : Test PHP de base</h2>
+        <p>Vérifie que PHP fonctionne sur votre serveur</p>
+        <button onclick="testPHP()">Tester PHP</button>
+        <div id="phpResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Étape 2 : Test Connexion API</h2>
+        <p>Vérifie que le fichier blog-api.php est accessible</p>
+        <button onclick="testAPI()">Tester l'API</button>
+        <div id="apiResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Étape 3 : Test Authentification</h2>
+        <p>Teste la connexion avec le mot de passe</p>
+        <input type="password" id="testPassword" value="js-industrie-admin-2024" placeholder="Mot de passe">
+        <button onclick="testAuth()">Tester Login</button>
+        <div id="authResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Étape 4 : Informations Système</h2>
+        <div class="result info">
+URL actuelle : <span id="currentUrl"></span>
+Protocole : <span id="protocol"></span>
+        </div>
+    </div>
+
+    <script>
+        // Afficher les infos système
+        document.getElementById('currentUrl').textContent = window.location.href;
+        document.getElementById('protocol').textContent = window.location.protocol;
+
+        async function testPHP() {
+            const resultDiv = document.getElementById('phpResult');
+            resultDiv.innerHTML = '<div class="result info">⏳ Test en cours...</div>';
+
+            try {
+                const response = await fetch('test-php.php');
+                const data = await response.json();
+
+                if (data.success) {
+                    resultDiv.innerHTML = `<div class="result success">
+✅ PHP fonctionne !
+
+Version PHP : ${data.version}
+Date serveur : ${data.date}
+                    </div>`;
+                } else {
+                    resultDiv.innerHTML = '<div class="result error">❌ Erreur dans la réponse PHP</div>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="result error">
+❌ ERREUR : Impossible de contacter le serveur PHP
+
+Erreur : ${error.message}
+
+Solutions :
+1. Ouvrez le site via http://localhost (pas file:///)
+2. Démarrez un serveur PHP :
+   - XAMPP/MAMP : Démarrez Apache
+   - Terminal : php -S localhost:8000
+3. Vérifiez que test-php.php existe
+                </div>`;
+            }
+        }
+
+        async function testAPI() {
+            const resultDiv = document.getElementById('apiResult');
+            resultDiv.innerHTML = '<div class="result info">⏳ Test en cours...</div>';
+
+            try {
+                const response = await fetch('blog-api.php?action=list');
+                const data = await response.json();
+
+                if (data.success !== undefined) {
+                    resultDiv.innerHTML = `<div class="result success">
+✅ L'API blog-api.php est accessible !
+
+Articles trouvés : ${data.articles ? data.articles.length : 0}
+                    </div>`;
+                } else {
+                    resultDiv.innerHTML = '<div class="result error">❌ Réponse API invalide</div>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="result error">
+❌ ERREUR : Impossible d'accéder à blog-api.php
+
+Erreur : ${error.message}
+
+Vérifiez que le fichier blog-api.php existe dans le même dossier.
+                </div>`;
+            }
+        }
+
+        async function testAuth() {
+            const resultDiv = document.getElementById('authResult');
+            const password = document.getElementById('testPassword').value;
+
+            resultDiv.innerHTML = '<div class="result info">⏳ Test de connexion...</div>';
+
+            const formData = new FormData();
+            formData.append('password', password);
+
+            try {
+                const response = await fetch('blog-api.php?action=login', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    resultDiv.innerHTML = `<div class="result success">
+✅ AUTHENTIFICATION RÉUSSIE !
+
+Le mot de passe fonctionne correctement.
+Vous pouvez maintenant utiliser admin.html
+
+Message : ${data.message}
+                    </div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="result error">
+❌ Mot de passe incorrect
+
+Message : ${data.message}
+
+Le mot de passe correct est : js-industrie-admin-2024
+                    </div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="result error">
+❌ ERREUR de connexion
+
+Erreur : ${error.message}
+
+L'API ne répond pas. Vérifiez les étapes précédentes.
+                </div>`;
+            }
+        }
+    </script>
+</body>
+</html>
