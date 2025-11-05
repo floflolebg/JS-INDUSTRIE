@@ -22,9 +22,10 @@ if (!defined('IMAGES_DIR')) {
     define('IMAGES_DIR', 'images/blog/');
 }
 
-// Mot de passe admin (à changer !)
-if (!defined('ADMIN_PASSWORD')) {
-    define('ADMIN_PASSWORD', 'js-industrie-admin-2024');
+// Hash du mot de passe admin (bcrypt)
+// Mot de passe: js-industrie-admin-2024
+if (!defined('ADMIN_PASSWORD_HASH')) {
+    define('ADMIN_PASSWORD_HASH', '$2y$12$pkPXKK1Li2F65UesuuxwoO.VL7Rqw1nGVzW9a/3yeD117rXer8vYe');
 }
 
 // Créer les dossiers si nécessaires
@@ -78,7 +79,7 @@ if (!function_exists('checkAuth')) {
         $password = isset($headers['X-Admin-Password']) ? $headers['X-Admin-Password'] :
                     (isset($_POST['password']) ? $_POST['password'] : '');
 
-        if ($password !== ADMIN_PASSWORD) {
+        if (!password_verify($password, ADMIN_PASSWORD_HASH)) {
             http_response_code(401);
             echo json_encode(['success' => false, 'message' => 'Non autorisé']);
             exit;
@@ -131,7 +132,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
 if ($method === 'POST' && $action === 'login') {
     $password = isset($_POST['password']) ? $_POST['password'] : '';
 
-    if ($password === ADMIN_PASSWORD) {
+    if (password_verify($password, ADMIN_PASSWORD_HASH)) {
         echo json_encode(['success' => true, 'message' => 'Connexion réussie']);
     } else {
         http_response_code(401);
