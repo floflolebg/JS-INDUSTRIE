@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détection Chemins - JS Industrie</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        h1 { color: #4ec9b0; }
+        .box {
+            background: #252526;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #007acc;
+        }
+        .success { border-left-color: #4ec9b0; }
+        .error { border-left-color: #f48771; }
+        .warning { border-left-color: #dcdcaa; }
+        .path { color: #ce9178; word-break: break-all; }
+        button {
+            background: #0e639c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #1177bb; }
+        pre {
+            background: #1e1e1e;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Détection des Chemins</h1>
+
+    <div class="box">
+        <h3>📍 URLs actuelles</h3>
+        <p><strong>URL complète:</strong> <span class="path" id="fullUrl"></span></p>
+        <p><strong>Hostname:</strong> <span class="path" id="hostname"></span></p>
+        <p><strong>Protocol:</strong> <span class="path" id="protocol"></span></p>
+        <p><strong>Pathname:</strong> <span class="path" id="pathname"></span></p>
+        <p><strong>Base URL:</strong> <span class="path" id="baseUrl"></span></p>
+    </div>
+
+    <div class="box">
+        <h3>🧪 Tests de chemins vers blog-api.php</h3>
+        <button onclick="testPath('blog-api.php')">Test: blog-api.php</button>
+        <button onclick="testPath('./blog-api.php')">Test: ./blog-api.php</button>
+        <button onclick="testPath('/blog-api.php')">Test: /blog-api.php</button>
+        <button onclick="testPath('../blog-api.php')">Test: ../blog-api.php</button>
+        <div id="pathTests"></div>
+    </div>
+
+    <div class="box">
+        <h3>📁 Structure détectée</h3>
+        <div id="structure"></div>
+    </div>
+
+    <div class="box warning">
+        <h3>💡 Solution</h3>
+        <div id="solution"></div>
+    </div>
+
+    <script>
+        // Afficher les URLs actuelles
+        document.getElementById('fullUrl').textContent = window.location.href;
+        document.getElementById('hostname').textContent = window.location.hostname;
+        document.getElementById('protocol').textContent = window.location.protocol;
+        document.getElementById('pathname').textContent = window.location.pathname;
+
+        const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+        document.getElementById('baseUrl').textContent = baseUrl;
+
+        // Tester un chemin
+        async function testPath(path) {
+            const resultsEl = document.getElementById('pathTests');
+            const testUrl = path.startsWith('/') ? window.location.origin + path : baseUrl + path;
+
+            resultsEl.innerHTML += `<p>🔄 Test de: <span class="path">${testUrl}</span></p>`;
+
+            try {
+                const response = await fetch(testUrl + '?action=list');
+                const status = response.status;
+                const contentType = response.headers.get('content-type');
+
+                if (status === 200 && contentType?.includes('application/json')) {
+                    const data = await response.json();
+                    if (data.success && data.articles) {
+                        resultsEl.innerHTML += `<div class="box success">
+                            ✅ <strong>FONCTIONNE !</strong><br>
+                            Status: ${status}<br>
+                            Articles: ${data.articles.length}<br>
+                            Chemin à utiliser: <span class="path">${path}</span>
+                        </div>`;
+                        showSolution(path);
+                        return;
+                    }
+                }
+
+                resultsEl.innerHTML += `<div class="box error">
+                    ❌ Ne fonctionne pas<br>
+                    Status: ${status}<br>
+                    Content-Type: ${contentType}
+                </div>`;
+            } catch (error) {
+                resultsEl.innerHTML += `<div class="box error">
+                    ❌ Erreur: ${error.message}
+                </div>`;
+            }
+        }
+
+        // Afficher la solution
+        function showSolution(workingPath) {
+            const solutionEl = document.getElementById('solution');
+            solutionEl.innerHTML = `
+                <p><strong>✅ Le chemin qui fonctionne est:</strong> <span class="path">${workingPath}</span></p>
+                <p><strong>📝 À modifier dans js/blog.js ligne 13:</strong></p>
+                <pre>// AVANT
+const url = category === 'all'
+    ? 'blog-api.php?action=list'
+    : \`blog-api.php?action=list&category=\${category}\`;
+
+// APRÈS
+const url = category === 'all'
+    ? '${workingPath}?action=list'
+    : \`${workingPath}?action=list&category=\${category}\`;</pre>
+            `;
+        }
+
+        // Détecter la structure
+        async function detectStructure() {
+            const structureEl = document.getElementById('structure');
+            const files = [
+                'index.html',
+                'blog.html',
+                'admin.html',
+                'blog-api.php',
+                'js/blog.js',
+                'css/style.css'
+            ];
+
+            structureEl.innerHTML = '<p>Détection des fichiers...</p>';
+
+            for (const file of files) {
+                try {
+                    const response = await fetch(file, { method: 'HEAD' });
+                    const icon = response.ok ? '✅' : '❌';
+                    const status = response.status;
+                    structureEl.innerHTML += `<p>${icon} ${file} - ${status}</p>`;
+                } catch (error) {
+                    structureEl.innerHTML += `<p>❌ ${file} - Erreur</p>`;
+                }
+            }
+        }
+
+        // Lancer la détection au chargement
+        window.addEventListener('load', () => {
+            detectStructure();
+
+            // Info sur l'emplacement
+            const pathname = window.location.pathname;
+            const isInSubfolder = pathname.includes('/') && pathname !== '/' && !pathname.endsWith('.html');
+
+            if (isInSubfolder) {
+                document.getElementById('structure').innerHTML += `
+                    <div class="box warning" style="margin-top: 20px;">
+                        <strong>⚠️ Attention:</strong> Vous êtes dans un sous-dossier!<br>
+                        Pathname: <span class="path">${pathname}</span><br>
+                        Cela peut causer des problèmes de chemins relatifs.
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>

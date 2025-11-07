@@ -9,10 +9,19 @@ document.addEventListener('DOMContentLoaded', function() {
 // Charger les articles
 async function loadBlogArticles(category = 'all') {
     try {
-        const url = category === 'all'
-            ? 'blog-api.php?action=list'
-            : `blog-api.php?action=list&category=${category}`;
+        // Construire l'URL de l'API de manière robuste
+        // Obtenir le chemin du dossier actuel
+        const currentPath = window.location.pathname;
+        const currentDir = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
 
+        // Construire le chemin vers blog-api.php (même dossier que blog.html)
+        const apiPath = currentDir + 'blog-api.php';
+
+        const url = category === 'all'
+            ? `${apiPath}?action=list`
+            : `${apiPath}?action=list&category=${category}`;
+
+        console.log('🔍 Chargement articles depuis:', url);
         const response = await fetch(url);
         const data = await response.json();
 

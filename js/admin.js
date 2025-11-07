@@ -2,6 +2,16 @@
 let currentPassword = '';
 let editingArticleId = null;
 
+// Helper pour construire l'URL de l'API
+function getApiUrl(action, params = {}) {
+    const currentPath = window.location.pathname;
+    const currentDir = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
+    const apiPath = currentDir + 'blog-api.php';
+
+    const queryParams = new URLSearchParams({ action, ...params });
+    return `${apiPath}?${queryParams}`;
+}
+
 // Connexion
 document.getElementById('loginForm').addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -14,7 +24,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     formData.append('password', password);
 
     try {
-        const response = await fetch('blog-api.php?action=login', {
+        const response = await fetch(getApiUrl('login'), {
             method: 'POST',
             body: formData
         });
@@ -47,7 +57,7 @@ function logout() {
 // Charger les articles
 async function loadArticles() {
     try {
-        const response = await fetch('blog-api.php?action=list');
+        const response = await fetch(getApiUrl('list'));
         const data = await response.json();
 
         if (data.success) {
@@ -121,7 +131,7 @@ function closeModal() {
 // Charger un article pour édition
 async function loadArticleForEdit(id) {
     try {
-        const response = await fetch(`blog-api.php?action=get&id=${id}`);
+        const response = await fetch(getApiUrl('get', { id }));
         const data = await response.json();
 
         if (data.success) {
@@ -163,7 +173,7 @@ document.getElementById('articleForm').addEventListener('submit', async function
 
     try {
         const action = id ? 'update' : 'create';
-        const response = await fetch(`blog-api.php?action=${action}`, {
+        const response = await fetch(getApiUrl(action), {
             method: 'POST',
             body: formData
         });
@@ -210,7 +220,7 @@ async function deleteArticle(id, title) {
     formData.append('id', id);
 
     try {
-        const response = await fetch('blog-api.php?action=delete', {
+        const response = await fetch(getApiUrl('delete'), {
             method: 'POST',
             body: formData
         });
