@@ -64,6 +64,33 @@ Options -Indexes
 # </IfModule>
 
 # ================================================
+# TYPES MIME - FORCER LES BONS TYPES
+# ================================================
+
+<IfModule mod_mime.c>
+    # CSS
+    AddType text/css .css
+
+    # JavaScript
+    AddType application/javascript .js
+    AddType application/x-javascript .js
+
+    # Images
+    AddType image/png .png
+    AddType image/jpeg .jpg .jpeg
+    AddType image/gif .gif
+    AddType image/webp .webp
+    AddType image/svg+xml .svg
+
+    # Fonts
+    AddType font/woff2 .woff2
+    AddType font/woff .woff
+    AddType application/vnd.ms-fontobject .eot
+    AddType font/ttf .ttf
+    AddType font/otf .otf
+</IfModule>
+
+# ================================================
 # COMPRESSION ET PERFORMANCE
 # ================================================
 
@@ -79,9 +106,18 @@ Options -Indexes
     ExpiresByType image/png "access plus 1 year"
     ExpiresByType image/gif "access plus 1 year"
     ExpiresByType image/webp "access plus 1 year"
-    ExpiresByType text/css "access plus 1 month"
-    ExpiresByType text/javascript "access plus 1 month"
-    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType text/css "access plus 1 week"
+    ExpiresByType text/javascript "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+</IfModule>
+
+# Désactiver le cache pour le développement (à supprimer en production)
+<IfModule mod_headers.c>
+    <FilesMatch "\.(css|js)$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires 0
+    </FilesMatch>
 </IfModule>
 
 # ================================================
