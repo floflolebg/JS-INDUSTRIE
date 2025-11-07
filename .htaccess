@@ -20,8 +20,12 @@ Options -Indexes
     Require all denied
 </FilesMatch>
 
-# Bloquer l'accès aux fichiers de test et debug
-<FilesMatch "^(test-|debug-|generate-|phpinfo)">
+# Bloquer l'accès aux fichiers de test et debug (sauf test-css.html pour diagnostic)
+<FilesMatch "^(debug-|generate-|phpinfo)">
+    Require all denied
+</FilesMatch>
+
+<FilesMatch "^test-.*\.(php|sql|log)$">
     Require all denied
 </FilesMatch>
 
