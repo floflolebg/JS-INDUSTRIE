@@ -214,12 +214,19 @@ window.addEventListener('scroll', function() {
 
     // Animation du logo dans la navigation
     const navLogo = document.querySelector('.nav-logo');
-    const headerLogoSection = document.querySelector('.header-logo-section');
+    const headerSection = document.querySelector('.header-logo-section') || document.querySelector('.header-title-section');
 
-    if (navLogo && headerLogoSection) {
-        const headerLogoRect = headerLogoSection.getBoundingClientRect();
-        // Si le logo du header n'est plus visible (son bas est au-dessus du viewport)
-        if (headerLogoRect.bottom < 0) {
+    if (navLogo && headerSection) {
+        const headerRect = headerSection.getBoundingClientRect();
+        // Si le header n'est plus visible (scroll de plus de 150px)
+        if (window.scrollY > 150) {
+            navLogo.classList.add('visible');
+        } else {
+            navLogo.classList.remove('visible');
+        }
+    } else if (navLogo) {
+        // Si pas de header section, utiliser simplement le scroll
+        if (window.scrollY > 150) {
             navLogo.classList.add('visible');
         } else {
             navLogo.classList.remove('visible');
