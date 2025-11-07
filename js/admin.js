@@ -1,25 +1,30 @@
-// Administration du blog JS Industrie
+/**
+ * Administration Blog - JS Industrie
+ * Gestion des articles de blog
+ */
+
 let currentPassword = '';
 let editingArticleId = null;
 
-// Helper pour construire l'URL de l'API
+/**
+ * Construire l'URL de l'API
+ */
 function getApiUrl(action, params = {}) {
-    const currentPath = window.location.pathname;
-    const currentDir = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
-    const apiPath = currentDir + 'blog-api.php';
-
-    const queryParams = new URLSearchParams({ action, ...params });
-    return `${apiPath}?${queryParams}`;
+    const path = window.location.pathname;
+    const dir = path.substring(0, path.lastIndexOf('/') + 1);
+    const api = dir + 'blog-api.php';
+    const query = new URLSearchParams({ action, ...params });
+    return `${api}?${query}`;
 }
 
-// Connexion
+/**
+ * Connexion
+ */
 document.getElementById('loginForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
     const password = document.getElementById('password').value;
     const errorDiv = document.getElementById('loginError');
-
-    // Vérification du mot de passe
     const formData = new FormData();
     formData.append('password', password);
 
@@ -41,12 +46,14 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
             errorDiv.style.display = 'block';
         }
     } catch (error) {
-        errorDiv.textContent = 'Erreur de connexion au serveur';
+        errorDiv.textContent = 'Erreur de connexion';
         errorDiv.style.display = 'block';
     }
 });
 
-// Déconnexion
+/**
+ * Déconnexion
+ */
 function logout() {
     currentPassword = '';
     document.getElementById('loginScreen').style.display = 'flex';
@@ -54,7 +61,9 @@ function logout() {
     document.getElementById('password').value = '';
 }
 
-// Charger les articles
+/**
+ * Charger les articles
+ */
 async function loadArticles() {
     try {
         const response = await fetch(getApiUrl('list'));
@@ -64,11 +73,13 @@ async function loadArticles() {
             displayArticles(data.articles);
         }
     } catch (error) {
-        showAlert('Erreur lors du chargement des articles', 'error');
+        showAlert('Erreur lors du chargement', 'error');
     }
 }
 
-// Afficher les articles
+/**
+ * Afficher les articles
+ */
 function displayArticles(articles) {
     const grid = document.getElementById('articlesGrid');
 
@@ -76,7 +87,7 @@ function displayArticles(articles) {
         grid.innerHTML = `
             <div class="no-articles">
                 <h3>Aucun article</h3>
-                <p>Commencez par créer votre premier article !</p>
+                <p>Créez votre premier article !</p>
             </div>
         `;
         return;
@@ -88,22 +99,24 @@ function displayArticles(articles) {
                 <span class="article-category">${getCategoryLabel(article.category)}</span>
             </div>
             <div class="article-body">
-                <h3>${article.title}</h3>
+                <h3>${escapeHtml(article.title)}</h3>
                 <div class="article-meta">
                     <span>📅 ${formatDate(article.date)}</span>
-                    <span>👤 ${article.author}</span>
+                    <span>👤 ${escapeHtml(article.author)}</span>
                 </div>
-                <p>${article.excerpt.substring(0, 100)}${article.excerpt.length > 100 ? '...' : ''}</p>
+                <p>${escapeHtml(article.excerpt.substring(0, 100))}${article.excerpt.length > 100 ? '...' : ''}</p>
                 <div class="article-actions">
                     <button class="btn-small btn-edit" onclick="editArticle('${article.id}')">✏️ Modifier</button>
-                    <button class="btn-small btn-delete" onclick="deleteArticle('${article.id}', '${article.title.replace(/'/g, "\\'")}')">🗑️ Supprimer</button>
+                    <button class="btn-small btn-delete" onclick="deleteArticle('${article.id}', '${escapeHtml(article.title).replace(/'/g, "\\'")}')">🗑️ Supprimer</button>
                 </div>
             </div>
         </div>
     `).join('');
 }
 
-// Ouvrir le modal
+/**
+ * Ouvrir le modal
+ */
 function openModal(articleId = null) {
     editingArticleId = articleId;
     const modal = document.getElementById('articleModal');
@@ -122,13 +135,17 @@ function openModal(articleId = null) {
     modal.classList.add('active');
 }
 
-// Fermer le modal
+/**
+ * Fermer le modal
+ */
 function closeModal() {
     document.getElementById('articleModal').classList.remove('active');
     editingArticleId = null;
 }
 
-// Charger un article pour édition
+/**
+ * Charger un article pour édition
+ */
 async function loadArticleForEdit(id) {
     try {
         const response = await fetch(getApiUrl('get', { id }));
@@ -144,11 +161,13 @@ async function loadArticleForEdit(id) {
             document.getElementById('content').value = article.content;
         }
     } catch (error) {
-        showAlert('Erreur lors du chargement de l\'article', 'error');
+        showAlert('Erreur lors du chargement', 'error');
     }
 }
 
-// Soumettre le formulaire
+/**
+ * Soumettre le formulaire
+ */
 document.getElementById('articleForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
@@ -178,40 +197,32 @@ document.getElementById('articleForm').addEventListener('submit', async function
             body: formData
         });
 
-        // Vérifier si la réponse est du JSON valide
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            // La réponse n'est pas du JSON, probablement une erreur PHP
-            const text = await response.text();
-            console.error('Réponse non-JSON reçue:', text);
-            showAlert('Erreur serveur. Ouvrez la console (F12) pour voir les détails.', 'error');
-            return;
-        }
-
         const data = await response.json();
 
         if (data.success) {
-            showAlert(id ? 'Article mis à jour avec succès !' : 'Article créé avec succès !', 'success');
+            showAlert(id ? 'Article mis à jour !' : 'Article créé !', 'success');
             closeModal();
             loadArticles();
         } else {
-            showAlert(data.message || 'Erreur lors de l\'enregistrement', 'error');
-            console.error('Erreur API:', data);
+            showAlert(data.message || 'Erreur', 'error');
         }
     } catch (error) {
-        console.error('Erreur complète:', error);
-        showAlert('Erreur réseau : ' + error.message, 'error');
+        showAlert('Erreur réseau', 'error');
     }
 });
 
-// Modifier un article
+/**
+ * Modifier un article
+ */
 function editArticle(id) {
     openModal(id);
 }
 
-// Supprimer un article
+/**
+ * Supprimer un article
+ */
 async function deleteArticle(id, title) {
-    if (!confirm(`Êtes-vous sûr de vouloir supprimer l'article "${title}" ?`)) {
+    if (!confirm(`Supprimer "${title}" ?`)) {
         return;
     }
 
@@ -228,17 +239,19 @@ async function deleteArticle(id, title) {
         const data = await response.json();
 
         if (data.success) {
-            showAlert('Article supprimé avec succès', 'success');
+            showAlert('Article supprimé', 'success');
             loadArticles();
         } else {
-            showAlert(data.message || 'Erreur lors de la suppression', 'error');
+            showAlert(data.message || 'Erreur', 'error');
         }
     } catch (error) {
         showAlert('Erreur réseau', 'error');
     }
 }
 
-// Afficher une alerte
+/**
+ * Afficher une alerte
+ */
 function showAlert(message, type) {
     const alertDiv = document.getElementById('alert');
     alertDiv.innerHTML = `
@@ -252,7 +265,9 @@ function showAlert(message, type) {
     }, 5000);
 }
 
-// Formater la date
+/**
+ * Formater une date
+ */
 function formatDate(dateString) {
     const date = new Date(dateString);
     return date.toLocaleDateString('fr-FR', {
@@ -262,7 +277,9 @@ function formatDate(dateString) {
     });
 }
 
-// Obtenir le label de catégorie
+/**
+ * Obtenir le label de catégorie
+ */
 function getCategoryLabel(category) {
     const labels = {
         'actualites': 'Actualités',
@@ -273,7 +290,18 @@ function getCategoryLabel(category) {
     return labels[category] || category;
 }
 
-// Fermer le modal en cliquant sur le fond
+/**
+ * Échapper le HTML
+ */
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+/**
+ * Fermer le modal en cliquant sur le fond
+ */
 document.getElementById('articleModal').addEventListener('click', function(e) {
     if (e.target === this) {
         closeModal();

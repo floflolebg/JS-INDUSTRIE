@@ -1,275 +1,202 @@
 <?php
-// API pour gérer les articles de blog
-// Démarrer le buffer de sortie pour capturer toute sortie accidentelle
-ob_start();
+/**
+ * API REST pour gérer les articles de blog
+ * JS Industrie - 2025
+ */
 
-// Désactiver l'affichage des erreurs pour éviter de casser le JSON
-@ini_set('display_errors', 0);
-@ini_set('display_startup_errors', 0);
+// Configuration stricte
 error_reporting(0);
-ini_set('log_errors', 1);
-
-// Définir le timezone pour éviter les warnings
+ini_set('display_errors', 0);
 date_default_timezone_set('Europe/Paris');
 
-// Nettoyer le buffer et envoyer les headers
-ob_clean();
+// Headers JSON
 header('Content-Type: application/json; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
-header('X-Frame-Options: DENY');
-header('X-XSS-Protection: 1; mode=block');
 
-// Fonction pour envoyer du JSON proprement
-function sendJSON($data, $code = 200) {
-    // Nettoyer tout buffer existant
-    while (ob_get_level() > 0) {
-        ob_end_clean();
-    }
+// Constantes
+define('ARTICLES_FILE', 'data/articles.json');
+define('IMAGES_DIR', 'images/blog/');
+define('ADMIN_PASSWORD', '$2y$12$pkPXKK1Li2F65UesuuxwoO.VL7Rqw1nGVzW9a/3yeD117rXer8vYe');
 
-    // Envoyer les headers
-    http_response_code($code);
-    header('Content-Type: application/json; charset=utf-8');
-
-    // Envoyer le JSON
-    echo json_encode($data);
-    exit;
-}
-
-// Fichier de stockage des articles
-if (!defined('ARTICLES_FILE')) {
-    define('ARTICLES_FILE', 'data/articles.json');
-}
-if (!defined('IMAGES_DIR')) {
-    define('IMAGES_DIR', 'images/blog/');
-}
-
-// Polyfill pour password_hash et password_verify (PHP 5.4 compatibility)
-if (!function_exists('password_hash')) {
-    function password_hash($password, $algo, $options = array()) {
-        $cost = isset($options['cost']) ? $options['cost'] : 12;
-        $salt = sprintf('$2y$%02d$', $cost);
-        $salt .= substr(str_replace('+', '.', base64_encode(openssl_random_pseudo_bytes(16))), 0, 22);
-        return crypt($password, $salt);
-    }
-}
-
+// Polyfills password PHP 5.4
 if (!function_exists('password_verify')) {
     function password_verify($password, $hash) {
         return crypt($password, $hash) === $hash;
     }
 }
 
-// Hash du mot de passe admin (bcrypt)
-// Mot de passe: js-industrie-admin-2024
-if (!defined('ADMIN_PASSWORD_HASH')) {
-    define('ADMIN_PASSWORD_HASH', '$2y$12$pkPXKK1Li2F65UesuuxwoO.VL7Rqw1nGVzW9a/3yeD117rXer8vYe');
+/**
+ * Envoyer une réponse JSON propre
+ */
+function respond($data, $code = 200) {
+    http_response_code($code);
+    die(json_encode($data));
 }
 
-// Créer les dossiers si nécessaires
-if (!file_exists('data')) {
-    mkdir('data', 0755);
-}
-if (!file_exists(IMAGES_DIR)) {
-    mkdir(IMAGES_DIR, 0755, true);
+/**
+ * Lire les articles
+ */
+function getArticles() {
+    if (!file_exists(ARTICLES_FILE)) {
+        return [];
+    }
+    $json = @file_get_contents(ARTICLES_FILE);
+    return $json ? json_decode($json, true) : [];
 }
 
-// Fonction pour lire les articles
-if (!function_exists('getArticles')) {
-    function getArticles() {
-        if (!file_exists(ARTICLES_FILE)) {
-            return [];
-        }
-        $json = file_get_contents(ARTICLES_FILE);
-        return json_decode($json, true) ?: [];
+/**
+ * Sauvegarder les articles
+ */
+function saveArticles($articles) {
+    if (!file_exists('data')) {
+        @mkdir('data', 0755, true);
+    }
+    return @file_put_contents(
+        ARTICLES_FILE,
+        json_encode($articles, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+    ) !== false;
+}
+
+/**
+ * Vérifier authentification
+ */
+function checkAuth() {
+    $password = $_POST['password'] ?? '';
+    if (!password_verify($password, ADMIN_PASSWORD)) {
+        respond(['success' => false, 'message' => 'Non autorisé'], 401);
     }
 }
 
-// Fonction pour sauvegarder les articles
-if (!function_exists('saveArticles')) {
-    function saveArticles($articles) {
-        return file_put_contents(ARTICLES_FILE, json_encode($articles, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-    }
+/**
+ * Générer un slug
+ */
+function generateSlug($title) {
+    $slug = strtolower(trim($title));
+    $slug = preg_replace('/[^a-z0-9\s-]/', '', $slug);
+    $slug = preg_replace('/[\s]+/', '-', $slug);
+    return trim($slug, '-');
 }
 
-// Fonction pour récupérer les headers (compatible tous serveurs)
-if (!function_exists('getAllHeaders')) {
-    function getAllHeaders() {
-        if (function_exists('getallheaders')) {
-            return getallheaders();
-        }
-
-        // Fallback pour les serveurs qui n'ont pas getallheaders()
-        $headers = [];
-        foreach ($_SERVER as $name => $value) {
-            if (substr($name, 0, 5) == 'HTTP_') {
-                $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
-            }
-        }
-        return $headers;
-    }
-}
-
-// Fonction pour vérifier le mot de passe
-if (!function_exists('checkAuth')) {
-    function checkAuth() {
-        $headers = getAllHeaders();
-        $password = isset($headers['X-Admin-Password']) ? $headers['X-Admin-Password'] :
-                    (isset($_POST['password']) ? $_POST['password'] : '');
-
-        if (!password_verify($password, ADMIN_PASSWORD_HASH)) {
-            sendJSON(['success' => false, 'message' => 'Non autorisé'], 401);
-        }
-    }
-}
-
-// Fonction pour générer un slug
-if (!function_exists('generateSlug')) {
-    function generateSlug($title) {
-        $slug = strtolower($title);
-        $slug = preg_replace('/[^a-z0-9\s-]/', '', $slug);
-        $slug = preg_replace('/[\s]+/', '-', $slug);
-        $slug = trim($slug, '-');
-        return $slug;
-    }
-}
-
-// Fonction pour uploader une image
-if (!function_exists('uploadImage')) {
-    function uploadImage() {
-        if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
-            return null;
-        }
-
-        // Limite de taille : 5MB
-        $maxSize = 5 * 1024 * 1024;
-        if ($_FILES['image']['size'] > $maxSize) {
-            return null;
-        }
-
-        // Extensions autorisées
-        $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-        $filename = $_FILES['image']['name'];
-        $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-
-        if (!in_array($ext, $allowed)) {
-            return null;
-        }
-
-        // Vérification du MIME type (avec fallback si finfo n'est pas disponible)
-        $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-        $mimeType = null;
-
-        if (function_exists('finfo_open')) {
-            $finfo = @finfo_open(FILEINFO_MIME_TYPE);
-            if ($finfo !== false) {
-                $mimeType = finfo_file($finfo, $_FILES['image']['tmp_name']);
-                finfo_close($finfo);
-            }
-        }
-
-        // Fallback si finfo ne fonctionne pas
-        if ($mimeType === null && function_exists('mime_content_type')) {
-            $mimeType = @mime_content_type($_FILES['image']['tmp_name']);
-        }
-
-        // Si on a un MIME type, le vérifier
-        if ($mimeType !== null && !in_array($mimeType, $allowedMimes)) {
-            return null;
-        }
-
-        // Vérifier que c'est vraiment une image avec getimagesize
-        $imageInfo = @getimagesize($_FILES['image']['tmp_name']);
-        if ($imageInfo === false) {
-            return null;
-        }
-
-        // Nom de fichier sécurisé
-        $newFilename = uniqid() . '_' . time() . '.' . $ext;
-        $destination = IMAGES_DIR . $newFilename;
-
-        if (move_uploaded_file($_FILES['image']['tmp_name'], $destination)) {
-            // Changer les permissions du fichier
-            chmod($destination, 0644);
-            return $newFilename;
-        }
-
+/**
+ * Uploader une image
+ */
+function uploadImage() {
+    if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
         return null;
     }
+
+    $file = $_FILES['image'];
+
+    // Vérifier taille (5MB max)
+    if ($file['size'] > 5 * 1024 * 1024) {
+        return null;
+    }
+
+    // Vérifier extension
+    $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+    if (!in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
+        return null;
+    }
+
+    // Vérifier que c'est une vraie image
+    if (!@getimagesize($file['tmp_name'])) {
+        return null;
+    }
+
+    // Créer dossier si nécessaire
+    if (!file_exists(IMAGES_DIR)) {
+        @mkdir(IMAGES_DIR, 0755, true);
+    }
+
+    // Déplacer fichier
+    $filename = uniqid() . '_' . time() . '.' . $ext;
+    $destination = IMAGES_DIR . $filename;
+
+    if (@move_uploaded_file($file['tmp_name'], $destination)) {
+        @chmod($destination, 0644);
+        return $filename;
+    }
+
+    return null;
 }
 
 // Router
 $method = $_SERVER['REQUEST_METHOD'];
-$action = isset($_GET['action']) ? $_GET['action'] : '';
+$action = $_GET['action'] ?? '';
 
-// POST /blog-api.php?action=login
+// ============================================================
+// LOGIN
+// ============================================================
 if ($method === 'POST' && $action === 'login') {
-    $password = isset($_POST['password']) ? $_POST['password'] : '';
+    $password = $_POST['password'] ?? '';
 
-    if (password_verify($password, ADMIN_PASSWORD_HASH)) {
-        sendJSON(['success' => true, 'message' => 'Connexion réussie']);
-    } else {
-        sendJSON(['success' => false, 'message' => 'Mot de passe incorrect'], 401);
+    if (password_verify($password, ADMIN_PASSWORD)) {
+        respond(['success' => true, 'message' => 'Connexion réussie']);
     }
+
+    respond(['success' => false, 'message' => 'Mot de passe incorrect'], 401);
 }
 
-// GET /blog-api.php?action=list
+// ============================================================
+// LIST
+// ============================================================
 if ($method === 'GET' && $action === 'list') {
     $articles = getArticles();
 
-    // Filtrer par catégorie si demandé
+    // Filtrer par catégorie
     if (isset($_GET['category']) && $_GET['category'] !== 'all') {
         $category = $_GET['category'];
-        $articles = array_filter($articles, function($article) use ($category) {
-            return $article['category'] === $category;
+        $articles = array_filter($articles, function($a) use ($category) {
+            return $a['category'] === $category;
         });
     }
 
-    // Trier par date (plus récent en premier)
+    // Trier par date
     usort($articles, function($a, $b) {
         return strtotime($b['date']) - strtotime($a['date']);
     });
 
-    sendJSON(['success' => true, 'articles' => array_values($articles)]);
+    respond(['success' => true, 'articles' => array_values($articles)]);
 }
 
-// GET /blog-api.php?action=get&id=xxx
+// ============================================================
+// GET
+// ============================================================
 if ($method === 'GET' && $action === 'get') {
-    $id = isset($_GET['id']) ? $_GET['id'] : '';
+    $id = $_GET['id'] ?? '';
     $articles = getArticles();
 
     foreach ($articles as $article) {
         if ($article['id'] === $id) {
-            sendJSON(['success' => true, 'article' => $article]);
+            respond(['success' => true, 'article' => $article]);
         }
     }
 
-    sendJSON(['success' => false, 'message' => 'Article non trouvé'], 404);
+    respond(['success' => false, 'message' => 'Article non trouvé'], 404);
 }
 
-// POST /blog-api.php?action=create
+// ============================================================
+// CREATE
+// ============================================================
 if ($method === 'POST' && $action === 'create') {
     checkAuth();
 
-    $title = isset($_POST['title']) ? trim($_POST['title']) : '';
-    $category = isset($_POST['category']) ? trim($_POST['category']) : '';
-    $excerpt = isset($_POST['excerpt']) ? trim($_POST['excerpt']) : '';
-    $content = isset($_POST['content']) ? trim($_POST['content']) : '';
-    $author = isset($_POST['author']) ? trim($_POST['author']) : 'JS Industrie';
+    $title = trim($_POST['title'] ?? '');
+    $category = trim($_POST['category'] ?? '');
+    $excerpt = trim($_POST['excerpt'] ?? '');
+    $content = trim($_POST['content'] ?? '');
+    $author = trim($_POST['author'] ?? 'JS Industrie');
 
+    // Validation
     if (empty($title) || empty($category) || empty($excerpt) || empty($content)) {
-        sendJSON(['success' => false, 'message' => 'Champs requis manquants', 'debug' => [
-            'title' => !empty($title),
-            'category' => !empty($category),
-            'excerpt' => !empty($excerpt),
-            'content' => !empty($content)
-        ]], 400);
+        respond(['success' => false, 'message' => 'Champs requis manquants'], 400);
     }
 
-    // Upload de l'image si présente
+    // Upload image
     $image = uploadImage();
 
-    $articles = getArticles();
-    $newArticle = [
+    // Créer article
+    $article = [
         'id' => uniqid(),
         'slug' => generateSlug($title),
         'title' => $title,
@@ -282,31 +209,33 @@ if ($method === 'POST' && $action === 'create') {
         'views' => 0
     ];
 
-    $articles[] = $newArticle;
+    // Sauvegarder
+    $articles = getArticles();
+    $articles[] = $article;
 
-    // Tenter de sauvegarder
-    $saved = saveArticles($articles);
-
-    if ($saved === false) {
-        sendJSON(['success' => false, 'message' => 'Impossible d\'écrire dans data/articles.json. Vérifiez les permissions.'], 500);
+    if (!saveArticles($articles)) {
+        respond(['success' => false, 'message' => 'Erreur d\'écriture'], 500);
     }
 
-    sendJSON(['success' => true, 'message' => 'Article créé avec succès', 'article' => $newArticle]);
+    respond(['success' => true, 'message' => 'Article créé', 'article' => $article]);
 }
 
-// POST /blog-api.php?action=update
+// ============================================================
+// UPDATE
+// ============================================================
 if ($method === 'POST' && $action === 'update') {
     checkAuth();
 
-    $id = isset($_POST['id']) ? $_POST['id'] : '';
-    $title = isset($_POST['title']) ? trim($_POST['title']) : '';
-    $category = isset($_POST['category']) ? trim($_POST['category']) : '';
-    $excerpt = isset($_POST['excerpt']) ? trim($_POST['excerpt']) : '';
-    $content = isset($_POST['content']) ? trim($_POST['content']) : '';
-    $author = isset($_POST['author']) ? trim($_POST['author']) : '';
+    $id = $_POST['id'] ?? '';
+    $title = trim($_POST['title'] ?? '');
+    $category = trim($_POST['category'] ?? '');
+    $excerpt = trim($_POST['excerpt'] ?? '');
+    $content = trim($_POST['content'] ?? '');
+    $author = trim($_POST['author'] ?? '');
 
+    // Validation
     if (empty($id) || empty($title) || empty($category) || empty($excerpt) || empty($content)) {
-        sendJSON(['success' => false, 'message' => 'Champs requis manquants'], 400);
+        respond(['success' => false, 'message' => 'Champs requis manquants'], 400);
     }
 
     $articles = getArticles();
@@ -323,51 +252,54 @@ if ($method === 'POST' && $action === 'update') {
             $article['excerpt'] = $excerpt;
             $article['content'] = $content;
             $article['author'] = $author;
+
             if ($newImage) {
                 $article['image'] = $newImage;
             }
-            $article['updated_at'] = date('Y-m-d H:i:s');
 
+            $article['updated_at'] = date('Y-m-d H:i:s');
             $found = true;
             break;
         }
     }
 
-    if ($found) {
-        $saved = saveArticles($articles);
-
-        if ($saved === false) {
-            sendJSON(['success' => false, 'message' => 'Impossible d\'écrire dans data/articles.json. Vérifiez les permissions.'], 500);
-        }
-
-        sendJSON(['success' => true, 'message' => 'Article mis à jour']);
-    } else {
-        sendJSON(['success' => false, 'message' => 'Article non trouvé'], 404);
+    if (!$found) {
+        respond(['success' => false, 'message' => 'Article non trouvé'], 404);
     }
+
+    if (!saveArticles($articles)) {
+        respond(['success' => false, 'message' => 'Erreur d\'écriture'], 500);
+    }
+
+    respond(['success' => true, 'message' => 'Article mis à jour']);
 }
 
-// POST /blog-api.php?action=delete
+// ============================================================
+// DELETE
+// ============================================================
 if ($method === 'POST' && $action === 'delete') {
     checkAuth();
 
-    $id = isset($_POST['id']) ? $_POST['id'] : '';
+    $id = $_POST['id'] ?? '';
 
     if (empty($id)) {
-        sendJSON(['success' => false, 'message' => 'ID manquant'], 400);
+        respond(['success' => false, 'message' => 'ID manquant'], 400);
     }
 
     $articles = getArticles();
-    $newArticles = array_filter($articles, function($article) use ($id) {
-        return $article['id'] !== $id;
+    $newArticles = array_filter($articles, function($a) use ($id) {
+        return $a['id'] !== $id;
     });
 
-    if (count($newArticles) < count($articles)) {
-        saveArticles(array_values($newArticles));
-        sendJSON(['success' => true, 'message' => 'Article supprimé']);
-    } else {
-        sendJSON(['success' => false, 'message' => 'Article non trouvé'], 404);
+    if (count($newArticles) === count($articles)) {
+        respond(['success' => false, 'message' => 'Article non trouvé'], 404);
     }
+
+    saveArticles(array_values($newArticles));
+    respond(['success' => true, 'message' => 'Article supprimé']);
 }
 
-// Action non reconnue
-sendJSON(['success' => false, 'message' => 'Action non reconnue'], 400);
+// ============================================================
+// ACTION NON RECONNUE
+// ============================================================
+respond(['success' => false, 'message' => 'Action non reconnue'], 400);
