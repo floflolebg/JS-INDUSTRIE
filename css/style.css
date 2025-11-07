@@ -44,7 +44,7 @@ body {
 }
 
 .m-0 { margin: 0; }
-.text-center { text-center: center; }
+.text-center { text-align: center; }
 
 /* ===================================
    Bande de contact supérieure
@@ -273,6 +273,34 @@ body {
 .dropdown-menu li a:hover {
     background-color: var(--secondary-color);
     color: var(--white);
+}
+
+/* ===================================
+   Styles génériques des sections
+   =================================== */
+.section {
+    padding: 80px 0;
+}
+
+.section-gray {
+    background-color: var(--bg-light);
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.section-subtitle {
+    text-align: center;
+    font-size: 1.1rem;
+    color: var(--text-light);
+    margin-bottom: 3rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* ===================================
@@ -518,13 +546,6 @@ body {
 .about-section {
     padding: 80px 0;
     background-color: var(--bg-light);
-}
-
-.section-title {
-    text-align: center;
-    font-size: 2.5rem;
-    color: var(--primary-color);
-    margin-bottom: 50px;
 }
 
 .about-content {
