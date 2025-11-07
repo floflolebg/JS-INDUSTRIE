@@ -175,19 +175,34 @@ body {
 .nav-toggle {
     display: none;
     flex-direction: column;
-    gap: 4px;
-    background: none;
+    gap: 5px;
+    background: var(--secondary-color);
     border: none;
     cursor: pointer;
-    padding: 10px;
+    padding: 12px;
+    border-radius: 8px;
+    z-index: 1001;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+}
+
+.nav-toggle:hover {
+    background: var(--accent-color);
+    transform: scale(1.05);
+}
+
+.nav-toggle:active {
+    transform: scale(0.95);
 }
 
 .nav-toggle span {
     display: block;
-    width: 25px;
+    width: 28px;
     height: 3px;
     background-color: var(--white);
-    transition: all 0.3s;
+    transition: all 0.3s ease;
+    border-radius: 3px;
 }
 
 .nav-menu {
@@ -811,25 +826,76 @@ body {
     }
 
     .nav-menu {
-        position: absolute;
-        top: 100%;
+        position: fixed;
+        top: 0;
         left: 0;
         right: 0;
-        background: var(--primary-color);
+        bottom: 0;
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--bg-dark) 100%);
         flex-direction: column;
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.3s ease;
+        justify-content: center;
+        align-items: center;
+        gap: 0;
+        padding: 80px 20px 40px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-100%);
+        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        z-index: 1000;
+        overflow-y: auto;
     }
 
     .nav-menu.active {
-        max-height: 500px;
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
     }
 
     .nav-menu li {
         width: 100%;
+        max-width: 400px;
         text-align: center;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        margin: 5px 0;
+        opacity: 0;
+        transform: translateX(-50px);
+        animation: slideInMenu 0.4s forwards;
+    }
+
+    .nav-menu.active li {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .nav-menu.active li:nth-child(1) { animation-delay: 0.1s; }
+    .nav-menu.active li:nth-child(2) { animation-delay: 0.15s; }
+    .nav-menu.active li:nth-child(3) { animation-delay: 0.2s; }
+    .nav-menu.active li:nth-child(4) { animation-delay: 0.25s; }
+    .nav-menu.active li:nth-child(5) { animation-delay: 0.3s; }
+    .nav-menu.active li:nth-child(6) { animation-delay: 0.35s; }
+
+    @keyframes slideInMenu {
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .nav-menu a {
+        padding: 18px 30px;
+        font-size: 1.2rem;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.05);
+        margin: 5px 0;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+
+    .nav-menu a:hover,
+    .nav-menu a.active {
+        background: var(--secondary-color);
+        transform: scale(1.05);
+        border-color: var(--accent-color);
+        box-shadow: 0 5px 20px rgba(30, 91, 168, 0.4);
     }
 
     .dropdown-menu {
@@ -838,7 +904,20 @@ body {
         visibility: visible;
         transform: none;
         box-shadow: none;
-        background: var(--bg-dark);
+        background: rgba(0, 0, 0, 0.3);
+        margin-top: 10px;
+        border-radius: 8px;
+        padding: 10px 0;
+    }
+
+    .dropdown-menu li {
+        margin: 5px 0;
+        animation: none;
+    }
+
+    .dropdown-menu a {
+        padding: 12px 25px;
+        font-size: 1rem;
     }
 
     .header-content {
