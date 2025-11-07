@@ -180,17 +180,51 @@ document.getElementById('articleForm').addEventListener('submit', async function
             body: formData
         });
 
+        // Lire la réponse en texte d'abord
+        const text = await response.text();
+        console.log('📥 Réponse brute du serveur:', text);
+
         // Vérifier si la réponse est du JSON valide
         const contentType = response.headers.get('content-type');
         if (!contentType || !contentType.includes('application/json')) {
             // La réponse n'est pas du JSON, probablement une erreur PHP
-            const text = await response.text();
-            console.error('Réponse non-JSON reçue:', text);
-            showAlert('Erreur serveur. Ouvrez la console (F12) pour voir les détails.', 'error');
+            console.error('❌ Réponse non-JSON reçue:');
+            console.error(text);
+
+            // Créer une popup avec l'erreur complète
+            const errorWindow = window.open('', 'Erreur PHP', 'width=800,height=600,scrollbars=yes');
+            errorWindow.document.write('<html><head><title>Erreur PHP Complète</title></head><body>');
+            errorWindow.document.write('<h1 style="color: red;">Erreur PHP</h1>');
+            errorWindow.document.write('<pre style="background: #f5f5f5; padding: 20px; overflow-x: auto;">');
+            errorWindow.document.write(text.replace(/</g, '&lt;').replace(/>/g, '&gt;'));
+            errorWindow.document.write('</pre></body></html>');
+            errorWindow.document.close();
+
+            showAlert('Erreur PHP - Une fenêtre avec les détails s\'est ouverte', 'error');
             return;
         }
 
-        const data = await response.json();
+        // Parser le JSON
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            console.error('❌ JSON Parse Error:', e);
+            console.error('Texte reçu:', text);
+
+            // Créer une popup avec l'erreur
+            const errorWindow = window.open('', 'Erreur JSON', 'width=800,height=600,scrollbars=yes');
+            errorWindow.document.write('<html><head><title>Erreur JSON</title></head><body>');
+            errorWindow.document.write('<h1 style="color: red;">Erreur de parsing JSON</h1>');
+            errorWindow.document.write('<p>Le serveur a retourné une réponse invalide:</p>');
+            errorWindow.document.write('<pre style="background: #f5f5f5; padding: 20px; overflow-x: auto;">');
+            errorWindow.document.write(text.replace(/</g, '&lt;').replace(/>/g, '&gt;'));
+            errorWindow.document.write('</pre></body></html>');
+            errorWindow.document.close();
+
+            showAlert('Erreur JSON - Une fenêtre avec les détails s\'est ouverte', 'error');
+            return;
+        }
 
         if (data.success) {
             showAlert(id ? 'Article mis à jour avec succès !' : 'Article créé avec succès !', 'success');
@@ -201,7 +235,7 @@ document.getElementById('articleForm').addEventListener('submit', async function
             console.error('Erreur API:', data);
         }
     } catch (error) {
-        console.error('Erreur complète:', error);
+        console.error('❌ Erreur complète:', error);
         showAlert('Erreur réseau : ' + error.message, 'error');
     }
 });
