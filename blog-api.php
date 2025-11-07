@@ -1,5 +1,8 @@
 <?php
 // API pour gérer les articles de blog
+// Démarrer le buffer de sortie pour capturer toute sortie accidentelle
+ob_start();
+
 // Désactiver l'affichage des erreurs pour éviter de casser le JSON
 @ini_set('display_errors', 0);
 @ini_set('display_startup_errors', 0);
@@ -9,10 +12,28 @@ ini_set('log_errors', 1);
 // Définir le timezone pour éviter les warnings
 date_default_timezone_set('Europe/Paris');
 
+// Nettoyer le buffer et envoyer les headers
+ob_clean();
 header('Content-Type: application/json; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
 header('X-XSS-Protection: 1; mode=block');
+
+// Fonction pour envoyer du JSON proprement
+function sendJSON($data, $code = 200) {
+    // Nettoyer tout buffer existant
+    while (ob_get_level() > 0) {
+        ob_end_clean();
+    }
+
+    // Envoyer les headers
+    http_response_code($code);
+    header('Content-Type: application/json; charset=utf-8');
+
+    // Envoyer le JSON
+    echo json_encode($data);
+    exit;
+}
 
 // Fichier de stockage des articles
 if (!defined('ARTICLES_FILE')) {
@@ -96,9 +117,7 @@ if (!function_exists('checkAuth')) {
                     (isset($_POST['password']) ? $_POST['password'] : '');
 
         if (!password_verify($password, ADMIN_PASSWORD_HASH)) {
-            http_response_code(401);
-            echo json_encode(['success' => false, 'message' => 'Non autorisé']);
-            exit;
+            sendJSON(['success' => false, 'message' => 'Non autorisé'], 401);
         }
     }
 }
@@ -187,12 +206,10 @@ if ($method === 'POST' && $action === 'login') {
     $password = isset($_POST['password']) ? $_POST['password'] : '';
 
     if (password_verify($password, ADMIN_PASSWORD_HASH)) {
-        echo json_encode(['success' => true, 'message' => 'Connexion réussie']);
+        sendJSON(['success' => true, 'message' => 'Connexion réussie']);
     } else {
-        http_response_code(401);
-        echo json_encode(['success' => false, 'message' => 'Mot de passe incorrect']);
+        sendJSON(['success' => false, 'message' => 'Mot de passe incorrect'], 401);
     }
-    exit;
 }
 
 // GET /blog-api.php?action=list
@@ -212,8 +229,7 @@ if ($method === 'GET' && $action === 'list') {
         return strtotime($b['date']) - strtotime($a['date']);
     });
 
-    echo json_encode(['success' => true, 'articles' => array_values($articles)]);
-    exit;
+    sendJSON(['success' => true, 'articles' => array_values($articles)]);
 }
 
 // GET /blog-api.php?action=get&id=xxx
@@ -223,14 +239,11 @@ if ($method === 'GET' && $action === 'get') {
 
     foreach ($articles as $article) {
         if ($article['id'] === $id) {
-            echo json_encode(['success' => true, 'article' => $article]);
-            exit;
+            sendJSON(['success' => true, 'article' => $article]);
         }
     }
 
-    http_response_code(404);
-    echo json_encode(['success' => false, 'message' => 'Article non trouvé']);
-    exit;
+    sendJSON(['success' => false, 'message' => 'Article non trouvé'], 404);
 }
 
 // POST /blog-api.php?action=create
@@ -244,14 +257,12 @@ if ($method === 'POST' && $action === 'create') {
     $author = isset($_POST['author']) ? trim($_POST['author']) : 'JS Industrie';
 
     if (empty($title) || empty($category) || empty($excerpt) || empty($content)) {
-        http_response_code(400);
-        echo json_encode(['success' => false, 'message' => 'Champs requis manquants', 'debug' => [
+        sendJSON(['success' => false, 'message' => 'Champs requis manquants', 'debug' => [
             'title' => !empty($title),
             'category' => !empty($category),
             'excerpt' => !empty($excerpt),
             'content' => !empty($content)
-        ]]);
-        exit;
+        ]], 400);
     }
 
     // Upload de l'image si présente
@@ -277,13 +288,10 @@ if ($method === 'POST' && $action === 'create') {
     $saved = saveArticles($articles);
 
     if ($saved === false) {
-        http_response_code(500);
-        echo json_encode(['success' => false, 'message' => 'Impossible d\'écrire dans data/articles.json. Vérifiez les permissions.']);
-        exit;
+        sendJSON(['success' => false, 'message' => 'Impossible d\'écrire dans data/articles.json. Vérifiez les permissions.'], 500);
     }
 
-    echo json_encode(['success' => true, 'message' => 'Article créé avec succès', 'article' => $newArticle]);
-    exit;
+    sendJSON(['success' => true, 'message' => 'Article créé avec succès', 'article' => $newArticle]);
 }
 
 // POST /blog-api.php?action=update
@@ -298,9 +306,7 @@ if ($method === 'POST' && $action === 'update') {
     $author = isset($_POST['author']) ? trim($_POST['author']) : '';
 
     if (empty($id) || empty($title) || empty($category) || empty($excerpt) || empty($content)) {
-        http_response_code(400);
-        echo json_encode(['success' => false, 'message' => 'Champs requis manquants']);
-        exit;
+        sendJSON(['success' => false, 'message' => 'Champs requis manquants'], 400);
     }
 
     $articles = getArticles();
@@ -331,17 +337,13 @@ if ($method === 'POST' && $action === 'update') {
         $saved = saveArticles($articles);
 
         if ($saved === false) {
-            http_response_code(500);
-            echo json_encode(['success' => false, 'message' => 'Impossible d\'écrire dans data/articles.json. Vérifiez les permissions.']);
-            exit;
+            sendJSON(['success' => false, 'message' => 'Impossible d\'écrire dans data/articles.json. Vérifiez les permissions.'], 500);
         }
 
-        echo json_encode(['success' => true, 'message' => 'Article mis à jour']);
+        sendJSON(['success' => true, 'message' => 'Article mis à jour']);
     } else {
-        http_response_code(404);
-        echo json_encode(['success' => false, 'message' => 'Article non trouvé']);
+        sendJSON(['success' => false, 'message' => 'Article non trouvé'], 404);
     }
-    exit;
 }
 
 // POST /blog-api.php?action=delete
@@ -351,9 +353,7 @@ if ($method === 'POST' && $action === 'delete') {
     $id = isset($_POST['id']) ? $_POST['id'] : '';
 
     if (empty($id)) {
-        http_response_code(400);
-        echo json_encode(['success' => false, 'message' => 'ID manquant']);
-        exit;
+        sendJSON(['success' => false, 'message' => 'ID manquant'], 400);
     }
 
     $articles = getArticles();
@@ -363,15 +363,11 @@ if ($method === 'POST' && $action === 'delete') {
 
     if (count($newArticles) < count($articles)) {
         saveArticles(array_values($newArticles));
-        echo json_encode(['success' => true, 'message' => 'Article supprimé']);
+        sendJSON(['success' => true, 'message' => 'Article supprimé']);
     } else {
-        http_response_code(404);
-        echo json_encode(['success' => false, 'message' => 'Article non trouvé']);
+        sendJSON(['success' => false, 'message' => 'Article non trouvé'], 404);
     }
-    exit;
 }
 
 // Action non reconnue
-http_response_code(400);
-echo json_encode(['success' => false, 'message' => 'Action non reconnue']);
-?>
+sendJSON(['success' => false, 'message' => 'Action non reconnue'], 400);
