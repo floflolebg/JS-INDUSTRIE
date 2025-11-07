@@ -358,13 +358,120 @@
             margin-bottom: 1rem;
         }
 
+        @media (max-width: 968px) {
+            .admin-content {
+                padding: 1.5rem;
+            }
+
+            .modal-content {
+                width: 95%;
+                max-width: 95%;
+                margin: 20px;
+            }
+        }
+
         @media (max-width: 768px) {
+            .login-box {
+                padding: 2rem 1.5rem;
+                width: 90%;
+            }
+
+            .login-box img {
+                max-width: 120px;
+            }
+
+            .login-box h1 {
+                font-size: 1.5rem;
+            }
+
+            .admin-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+                padding: 1.5rem;
+            }
+
+            .admin-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .admin-content {
+                padding: 1rem;
+            }
+
             .form-row {
                 grid-template-columns: 1fr;
             }
 
             .articles-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 1.5rem;
+            }
+
+            .modal-header h2 {
+                font-size: 1.3rem;
+            }
+
+            .actions {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-box {
+                padding: 1.5rem 1rem;
+            }
+
+            .login-box img {
+                max-width: 100px;
+            }
+
+            .login-box h1 {
+                font-size: 1.3rem;
+            }
+
+            .admin-header h1 {
+                font-size: 1.3rem;
+            }
+
+            .btn, .btn-primary, .btn-secondary, .btn-danger {
+                padding: 12px 20px;
+                font-size: 0.95rem;
+            }
+
+            .form-group label {
+                font-size: 0.9rem;
+            }
+
+            .form-group input,
+            .form-group textarea,
+            .form-group select {
+                font-size: 0.95rem;
+                padding: 12px;
+            }
+
+            .article-card h3 {
+                font-size: 1.1rem;
+            }
+
+            .article-meta {
+                font-size: 0.85rem;
+            }
+
+            .modal-header h2 {
+                font-size: 1.2rem;
+            }
+
+            .no-articles h2 {
+                font-size: 1.5rem;
+            }
+
+            .no-articles p {
+                font-size: 0.95rem;
             }
         }
     </style>

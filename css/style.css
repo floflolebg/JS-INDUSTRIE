@@ -777,6 +777,34 @@ body {
 /* ===================================
    Responsive Design
    =================================== */
+/* ===================================
+   Responsive Design - Tablette
+   =================================== */
+@media (max-width: 1024px) {
+    .container {
+        padding: 0 30px;
+    }
+
+    .intro-title {
+        font-size: 2rem;
+    }
+
+    .gallery-row.row-3 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .gallery-row.row-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .about-stats {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* ===================================
+   Responsive Design - Mobile Large (968px)
+   =================================== */
 @media (max-width: 968px) {
     .nav-toggle {
         display: flex;
@@ -798,6 +826,12 @@ body {
         max-height: 500px;
     }
 
+    .nav-menu li {
+        width: 100%;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
     .dropdown-menu {
         position: static;
         opacity: 1;
@@ -809,15 +843,17 @@ body {
 
     .header-content {
         flex-direction: column;
+        min-height: 300px !important;
     }
 
     .header-logo-section {
         flex: 1;
         width: 100%;
+        padding: 20px;
     }
 
     .header-slider-section {
-        min-height: 150px;
+        min-height: 200px !important;
     }
 
     .intro-container {
@@ -829,6 +865,7 @@ body {
         border-bottom: 3px solid var(--gray-200);
         padding-right: 0;
         padding-bottom: 30px;
+        margin-bottom: 30px;
     }
 
     .gallery-row.row-3,
@@ -851,11 +888,60 @@ body {
     .form-row {
         grid-template-columns: 1fr;
     }
+
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .about-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
+/* ===================================
+   Responsive Design - Tablette (768px)
+   =================================== */
 @media (max-width: 768px) {
+    .container {
+        padding: 0 20px;
+    }
+
     .top-contact-container {
         flex-direction: column;
+        gap: 10px;
+    }
+
+    .top-contact-item {
+        min-width: 100%;
+    }
+
+    .top-contact-item p {
+        font-size: 0.85rem;
+    }
+
+    .top-contact-phone {
+        font-size: 1.1rem;
+    }
+
+    .header-content {
+        min-height: 250px !important;
+    }
+
+    .header-slider-section {
+        min-height: 150px !important;
+    }
+
+    .header-slider-section h1 {
+        font-size: 2rem !important;
+    }
+
+    .intro-title {
+        font-size: 1.8rem;
+    }
+
+    .intro-text {
+        font-size: 1rem;
     }
 
     .cta-title {
@@ -870,6 +956,32 @@ body {
         font-size: 2rem;
     }
 
+    .services-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .service-card {
+        padding: 30px 20px;
+    }
+
+    .about-stats {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .stat-item {
+        padding: 25px;
+    }
+
+    .footer-title {
+        font-size: 1.8rem;
+    }
+
+    .footer-text {
+        font-size: 1rem;
+    }
+
     .footer-bottom-content {
         flex-direction: column;
         gap: 20px;
@@ -880,28 +992,174 @@ body {
         gap: 15px;
         text-align: center;
     }
+
+    .footer-phone a {
+        font-size: 1.3rem;
+    }
+
+    .footer-email a {
+        font-size: 1rem;
+    }
 }
 
+/* ===================================
+   Responsive Design - Mobile (480px)
+   =================================== */
 @media (max-width: 480px) {
+    .container {
+        padding: 0 15px;
+    }
+
     .main-logo {
-        max-width: 180px;
+        max-width: 150px;
+    }
+
+    .header-content {
+        min-height: 200px !important;
+    }
+
+    .header-slider-section {
+        min-height: 120px !important;
+    }
+
+    .header-slider-section h1 {
+        font-size: 1.5rem !important;
+        padding: 0 15px;
+    }
+
+    .top-contact-item p {
+        font-size: 0.75rem;
+    }
+
+    .top-contact-phone {
+        font-size: 1rem;
     }
 
     .intro-title {
-        font-size: 1.6rem;
+        font-size: 1.5rem;
     }
 
     .intro-text {
-        font-size: 1rem;
+        font-size: 0.95rem;
+    }
+
+    .section-title {
+        font-size: 1.6rem;
+    }
+
+    .cta-title {
+        font-size: 1.5rem;
+    }
+
+    .gallery-title {
+        font-size: 1.6rem;
+    }
+
+    .service-card {
+        padding: 25px 15px;
+    }
+
+    .service-card h3 {
+        font-size: 1.3rem;
+    }
+
+    .stat-item h4 {
+        font-size: 2rem;
+    }
+
+    .stat-item p {
+        font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        padding: 12px 15px;
+        font-size: 0.95rem;
     }
 
     .btn {
         padding: 12px 25px;
+        font-size: 0.95rem;
     }
 
     .btn-large {
         padding: 14px 30px;
         font-size: 1rem;
+    }
+
+    .footer-title {
+        font-size: 1.4rem;
+    }
+
+    .footer-text {
+        font-size: 0.9rem;
+    }
+
+    .footer-phone a {
+        font-size: 1.1rem;
+    }
+
+    .footer-email a {
+        font-size: 0.9rem;
+    }
+
+    .footer-logo img {
+        max-width: 120px;
+    }
+
+    .gallery-item {
+        min-height: 200px;
+    }
+}
+
+/* ===================================
+   Responsive Design - Très petit mobile (360px)
+   =================================== */
+@media (max-width: 360px) {
+    .container {
+        padding: 0 10px;
+    }
+
+    .main-logo {
+        max-width: 120px;
+    }
+
+    .header-slider-section h1 {
+        font-size: 1.2rem !important;
+    }
+
+    .intro-title {
+        font-size: 1.3rem;
+    }
+
+    .section-title {
+        font-size: 1.4rem;
+    }
+
+    .cta-title {
+        font-size: 1.3rem;
+    }
+
+    .gallery-title {
+        font-size: 1.4rem;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+
+    .btn-large {
+        padding: 12px 25px;
+        font-size: 0.95rem;
+    }
+
+    .footer-title {
+        font-size: 1.2rem;
+    }
+
+    .footer-text {
+        font-size: 0.85rem;
     }
 }
 
