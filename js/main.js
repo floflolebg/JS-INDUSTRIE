@@ -200,7 +200,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 // ===================================
-// Header sticky avec changement d'opacité
+// Header sticky avec changement d'opacité + Logo navigation
 // ===================================
 window.addEventListener('scroll', function() {
     const header = document.querySelector('.header') || document.querySelector('.header-main');
@@ -209,6 +209,20 @@ window.addEventListener('scroll', function() {
             header.style.boxShadow = '0 2px 20px rgba(0,0,0,0.15)';
         } else {
             header.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+        }
+    }
+
+    // Animation du logo dans la navigation
+    const navLogo = document.querySelector('.nav-logo');
+    const headerLogoSection = document.querySelector('.header-logo-section');
+
+    if (navLogo && headerLogoSection) {
+        const headerLogoRect = headerLogoSection.getBoundingClientRect();
+        // Si le logo du header n'est plus visible (son bas est au-dessus du viewport)
+        if (headerLogoRect.bottom < 0) {
+            navLogo.classList.add('visible');
+        } else {
+            navLogo.classList.remove('visible');
         }
     }
 });

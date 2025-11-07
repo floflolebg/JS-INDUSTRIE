@@ -178,6 +178,35 @@ body {
 
 .main-navigation .container {
     position: relative;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Logo dans la navigation (apparaît au scroll) */
+.nav-logo {
+    display: flex;
+    align-items: center;
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+}
+
+.nav-logo.visible {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+}
+
+.nav-logo-img {
+    height: 50px;
+    width: auto;
+    transition: transform 0.3s;
+}
+
+.nav-logo-img:hover {
+    transform: scale(1.05);
 }
 
 .nav-toggle {
@@ -889,6 +918,10 @@ body {
 
     .main-navigation .container {
         padding: 12px 20px;
+    }
+
+    .nav-logo {
+        display: none;
     }
 
     .nav-toggle {
