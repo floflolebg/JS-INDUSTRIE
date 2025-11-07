@@ -1,6 +1,6 @@
 // Chargement dynamique des articles de blog
 document.addEventListener('DOMContentLoaded', function() {
-    if (document.getElementById('articlesGrid') || document.querySelector('.blog-grid-full')) {
+    if (document.getElementById('articlesGrid') || document.getElementById('blog-articles-container')) {
         loadBlogArticles();
         setupFilters();
     }
@@ -38,16 +38,16 @@ async function loadBlogArticles(category = 'all') {
 
 // Afficher les articles
 function displayBlogArticles(articles) {
-    const gridFull = document.querySelector('.blog-grid-full');
+    const container = document.getElementById('blog-articles-container');
 
-    if (!gridFull) return;
+    if (!container) return;
 
     if (articles.length === 0) {
         showNoArticles();
         return;
     }
 
-    gridFull.innerHTML = articles.map(article => {
+    container.innerHTML = articles.map(article => {
         const imageUrl = article.image
             ? `images/blog/${article.image}`
             : getDefaultGradient(article.category);
@@ -57,32 +57,18 @@ function displayBlogArticles(articles) {
             : `background: ${imageUrl};`;
 
         return `
-            <article class="blog-card-full" data-category="${article.category}">
-                <div class="blog-image-full" style="${imageStyle}">
-                    <span class="blog-category">${getCategoryLabel(article.category)}</span>
+            <article class="blog-article-item" data-category="${article.category}">
+                <div class="blog-article-image" style="${imageStyle}">
+                    <span class="blog-article-category">${getCategoryLabel(article.category)}</span>
                 </div>
-                <div class="blog-content-full">
-                    <div class="blog-meta">
-                        <span class="blog-date">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                <line x1="16" y1="2" x2="16" y2="6"></line>
-                                <line x1="8" y1="2" x2="8" y2="6"></line>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                            </svg>
-                            ${formatDate(article.date)}
-                        </span>
-                        <span class="blog-author">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="12" cy="7" r="4"></circle>
-                            </svg>
-                            Par ${article.author}
-                        </span>
+                <div class="blog-article-content">
+                    <div class="blog-article-meta">
+                        <span>📅 ${formatDate(article.date)}</span>
+                        <span>👤 Par ${article.author}</span>
                     </div>
-                    <h2>${article.title}</h2>
-                    <p>${article.excerpt}</p>
-                    <a href="blog/articles/${article.slug}.html" class="btn btn-secondary">Lire l'article complet →</a>
+                    <h2 class="blog-article-title">${article.title}</h2>
+                    <p class="blog-article-excerpt">${article.excerpt}</p>
+                    <a href="blog/articles/${article.slug}.html" class="blog-article-read-more">Lire la suite →</a>
                 </div>
             </article>
         `;
@@ -91,11 +77,11 @@ function displayBlogArticles(articles) {
 
 // Afficher message "pas d'articles"
 function showNoArticles() {
-    const gridFull = document.querySelector('.blog-grid-full');
-    if (!gridFull) return;
+    const container = document.getElementById('blog-articles-container');
+    if (!container) return;
 
-    gridFull.innerHTML = `
-        <div style="text-align: center; padding: 3rem; background: white; border-radius: 12px; grid-column: 1 / -1;">
+    container.innerHTML = `
+        <div style="text-align: center; padding: 3rem; background: white; border-radius: 12px;">
             <h3 style="color: var(--primary-color); margin-bottom: 1rem;">Aucun article disponible</h3>
             <p style="color: var(--text-light);">Les articles seront bientôt publiés !</p>
         </div>
@@ -136,7 +122,7 @@ function formatDate(dateString) {
 
 // Configuration des filtres
 function setupFilters() {
-    const filterButtons = document.querySelectorAll('.filter-btn');
+    const filterButtons = document.querySelectorAll('.blog-filter-btn');
 
     filterButtons.forEach(button => {
         button.addEventListener('click', function() {

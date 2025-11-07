@@ -545,7 +545,11 @@ body {
    =================================== */
 .about-section {
     padding: 80px 0;
-    background-color: var(--bg-light);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+}
+
+.about-section .section-title {
+    color: white;
 }
 
 .about-content {
@@ -556,7 +560,7 @@ body {
 }
 
 .about-text h3 {
-    color: var(--secondary-color);
+    color: white;
     font-size: 1.8rem;
     margin-bottom: 20px;
 }
@@ -564,7 +568,7 @@ body {
 .about-text p {
     font-size: 1.1rem;
     line-height: 1.8;
-    color: var(--text-dark);
+    color: white;
     margin-bottom: 20px;
 }
 
@@ -1266,217 +1270,267 @@ body {
 /* ===================================
    Page Blog
    =================================== */
-.blog-filters {
-    padding: 2rem 20px;
+/* ========================================
+   NOUVELLE PAGE BLOG - STYLE MODERNE
+   ======================================== */
+
+/* Blog Filters */
+.blog-filters-section {
+    background-color: var(--bg-light);
+    padding: 30px 0;
+    border-bottom: 1px solid #e5e7eb;
 }
 
-.filters {
+.blog-filters-bar {
     display: flex;
-    gap: 1rem;
+    gap: 15px;
     justify-content: center;
     flex-wrap: wrap;
 }
 
-.filter-btn {
-    padding: 0.7rem 1.5rem;
-    border: 2px solid #e5e7eb;
+.blog-filter-btn {
+    padding: 10px 25px;
+    border: none;
     background-color: white;
-    color: var(--primary-color);
+    color: var(--text-dark);
     border-radius: 25px;
     cursor: pointer;
     font-weight: 500;
+    font-size: 0.95rem;
     transition: all 0.3s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
-.filter-btn:hover,
-.filter-btn.active {
+.blog-filter-btn:hover {
     background-color: var(--secondary-color);
     color: white;
-    border-color: var(--secondary-color);
+    box-shadow: 0 4px 12px rgba(30,91,168,0.3);
 }
 
-.blog-section {
-    padding: 3rem 20px;
+.blog-filter-btn.active {
+    background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+    color: white;
+    box-shadow: 0 4px 15px rgba(30,91,168,0.4);
 }
 
-.blog-grid-full {
-    display: grid;
-    gap: 3rem;
-}
-
-.blog-card-full {
+/* Blog Content Section */
+.blog-content-section {
     background-color: white;
+}
+
+.blog-articles-list {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+/* Blog Article Item */
+.blog-article-item {
+    background: white;
+    border: 1px solid #e5e7eb;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-    display: grid;
-    grid-template-columns: 350px 1fr;
-    transition: transform 0.3s;
-}
-
-.blog-card-full:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-}
-
-.blog-image-full {
-    width: 100%;
-    height: 100%;
-    min-height: 280px;
+    transition: all 0.3s;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: row;
+}
+
+.blog-article-item:hover {
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    transform: translateX(5px);
+}
+
+/* Blog Article - Left Image */
+.blog-article-image {
+    width: 300px;
+    min-height: 200px;
+    background-size: cover;
+    background-position: center;
     position: relative;
+    flex-shrink: 0;
 }
 
-.blog-category {
+.blog-article-category {
     position: absolute;
-    top: 1rem;
-    left: 1rem;
-    background-color: rgba(255,255,255,0.95);
-    padding: 0.5rem 1rem;
+    top: 15px;
+    left: 15px;
+    background: var(--accent-color);
+    color: white;
+    padding: 6px 16px;
     border-radius: 20px;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 600;
-    color: var(--primary-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.blog-content-full {
-    padding: 2rem;
+/* Blog Article - Right Content */
+.blog-article-content {
+    padding: 25px 30px;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    flex: 1;
 }
 
-.blog-meta {
+.blog-article-meta {
     display: flex;
-    gap: 2rem;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
+    gap: 20px;
+    margin-bottom: 12px;
+    font-size: 0.875rem;
     color: #6b7280;
 }
 
-.blog-meta span {
+.blog-article-meta span {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 6px;
 }
 
-.blog-meta svg {
-    width: 16px;
-    height: 16px;
-}
-
-.blog-date,
-.blog-author {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.blog-content-full h2 {
+.blog-article-title {
+    font-size: 1.5rem;
     color: var(--primary-color);
-    margin-bottom: 1rem;
-    font-size: 1.6rem;
+    margin-bottom: 12px;
+    font-weight: 700;
+    line-height: 1.3;
 }
 
-.blog-content-full p {
-    color: #6b7280;
-    line-height: 1.8;
-    margin-bottom: 0.8rem;
+.blog-article-item:hover .blog-article-title {
+    color: var(--secondary-color);
 }
 
-.pagination {
+.blog-article-excerpt {
+    color: var(--text-light);
+    line-height: 1.7;
+    margin-bottom: 15px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.blog-article-read-more {
+    color: var(--secondary-color);
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: gap 0.3s;
+}
+
+.blog-article-read-more:hover {
+    gap: 10px;
+}
+
+/* Pagination */
+.blog-pagination {
     display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-top: 3rem;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 60px;
+    padding: 20px 0;
+    border-top: 1px solid #e5e7eb;
 }
 
 .pagination-btn {
-    padding: 0.7rem 1.2rem;
+    padding: 12px 24px;
     border: 1px solid #e5e7eb;
     background-color: white;
     color: var(--primary-color);
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
     font-weight: 500;
     transition: all 0.3s;
 }
 
-.pagination-btn:hover,
-.pagination-btn.active {
+.pagination-btn:hover:not(:disabled) {
     background-color: var(--secondary-color);
     color: white;
     border-color: var(--secondary-color);
 }
 
+.pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagination-info {
+    color: var(--text-light);
+    font-weight: 500;
+}
+
 /* Newsletter Section */
-.newsletter {
-    padding: 4rem 20px;
+.newsletter-section {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    padding: 60px 0;
 }
 
-.newsletter-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 2rem;
-    flex-wrap: wrap;
+.newsletter-box {
+    text-align: center;
+    color: white;
 }
 
-.newsletter-text h2 {
-    color: var(--primary-color);
+.newsletter-box h3 {
     font-size: 2rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 15px;
 }
 
-.newsletter-text p {
-    color: #6b7280;
+.newsletter-box p {
     font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 30px;
 }
 
-.newsletter-form {
+.newsletter-form-inline {
     display: flex;
-    gap: 1rem;
-    flex: 1;
+    gap: 15px;
     max-width: 500px;
+    margin: 0 auto;
 }
 
-.newsletter-form input[type="email"] {
+.newsletter-form-inline input[type="email"] {
     flex: 1;
-    padding: 1rem 1.5rem;
-    border: 2px solid #e5e7eb;
-    border-radius: 50px;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 8px;
     font-size: 1rem;
     outline: none;
-    transition: border-color 0.3s;
 }
 
-.newsletter-form input[type="email"]:focus {
-    border-color: var(--secondary-color);
-}
-
-.newsletter-form button {
+.newsletter-form-inline button {
     white-space: nowrap;
 }
 
-/* Responsive Blog Page */
+/* Responsive */
 @media (max-width: 768px) {
-    .blog-card-full {
-        grid-template-columns: 1fr;
+    .blog-article-item {
+        flex-direction: column;
     }
 
-    .blog-image-full {
+    .blog-article-image {
+        width: 100%;
         min-height: 200px;
     }
 
-    .newsletter-content {
-        flex-direction: column;
-        text-align: center;
+    .blog-article-content {
+        padding: 20px;
     }
 
-    .newsletter-form {
+    .blog-article-title {
+        font-size: 1.3rem;
+    }
+
+    .blog-pagination {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .newsletter-form-inline {
+        flex-direction: column;
         width: 100%;
+        padding: 0 20px;
     }
 }
 
