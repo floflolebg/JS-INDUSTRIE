@@ -1004,7 +1004,6 @@ body {
         width: 100%;
         padding: 30px 20px;
         background: linear-gradient(135deg, #1E5BA8 0%, #2563eb 100%);
-        border-bottom: 4px solid var(--accent-color);
         box-shadow: 0 4px 15px rgba(30, 91, 168, 0.3);
     }
 
@@ -1128,7 +1127,6 @@ body {
     .header-logo-section {
         padding: 25px 20px;
         background: linear-gradient(135deg, #1E5BA8 0%, #2563eb 100%);
-        border-bottom: 4px solid var(--accent-color);
         box-shadow: 0 4px 15px rgba(30, 91, 168, 0.3);
     }
 
