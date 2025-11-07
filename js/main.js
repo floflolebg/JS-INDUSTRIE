@@ -494,13 +494,13 @@ const statsObserver = new IntersectionObserver(function(entries) {
     entries.forEach(entry => {
         if (entry.isIntersecting && !entry.target.classList.contains('counted')) {
             entry.target.classList.add('counted');
-            const statBoxes = entry.target.querySelectorAll('.stat-box h4');
+            const statBoxes = entry.target.querySelectorAll('.stat-item h4');
 
             statBoxes.forEach(box => {
                 const text = box.textContent;
                 const number = parseInt(text.replace(/\D/g, ''));
                 if (number) {
-                    box.textContent = '0+';
+                    box.textContent = '0';
                     setTimeout(() => {
                         animateCounter(box, number);
                     }, 200);
@@ -510,7 +510,7 @@ const statsObserver = new IntersectionObserver(function(entries) {
     });
 }, { threshold: 0.5 });
 
-const statsSection = document.querySelector('.apropos-stats');
+const statsSection = document.querySelector('.about-stats');
 if (statsSection) {
     statsObserver.observe(statsSection);
 }

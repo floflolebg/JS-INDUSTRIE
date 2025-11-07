@@ -9,13 +9,41 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- Header et Navigation -->
-    <header class="header">
-        <nav class="navbar">
-            <div class="container">
-                <a href="index.html" class="logo">
-                    <img src="images/logo1.png" alt="JS Industrie - Tuyauterie & Soudure" class="logo-image">
+    <!-- Bande de contact supérieure -->
+    <div class="top-contact-bar">
+        <div class="container top-contact-container">
+            <div class="top-contact-item">
+                <p class="m-0"><strong>Adresse :</strong><br>13 Rue Principale, 89140 Pont-sur-Yonne</p>
+            </div>
+            <div class="top-contact-item">
+                <div class="top-contact-border">
+                    <a class="top-contact-phone" href="tel:0609170826">06 09 17 08 26</a>
+                </div>
+            </div>
+            <div class="top-contact-item">
+                <div class="top-contact-border">
+                    <p class="text-center m-0"><strong>Contact</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header avec logo -->
+    <header class="header-main">
+        <div class="header-content" style="min-height: 150px;">
+            <div class="header-logo-section">
+                <a href="index.html">
+                    <img src="images/logo1.png" alt="JS Industrie Logo" class="main-logo">
                 </a>
+            </div>
+            <div class="header-slider-section" style="min-height: 150px; display: flex; align-items: center; justify-content: center;">
+                <h1 style="color: white; font-size: 3rem; margin: 0;">Blog & Actualités</h1>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="main-navigation">
+            <div class="container">
                 <button class="nav-toggle" aria-label="Toggle navigation">
                     <span></span>
                     <span></span>
@@ -23,23 +51,24 @@
                 </button>
                 <ul class="nav-menu">
                     <li><a href="index.html">Accueil</a></li>
-                    <li><a href="index.html#services">Services</a></li>
-                    <li><a href="index.html#realisations">Réalisations</a></li>
                     <li><a href="index.html#apropos">À propos</a></li>
+                    <li><a href="index.html#savoir-faire">Savoir-faire</a></li>
+                    <li class="nav-dropdown">
+                        <a href="index.html#realisations" class="dropdown-toggle">Réalisations</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="index.html#agroalimentaire">Agroalimentaire</a></li>
+                            <li><a href="index.html#industrie">Industrie</a></li>
+                            <li><a href="index.html#energie">Énergie</a></li>
+                            <li><a href="index.html#metallurgie">Métallurgie</a></li>
+                            <li><a href="index.html#chimie">Chimie</a></li>
+                        </ul>
+                    </li>
                     <li><a href="blog.html" class="active">Blog</a></li>
                     <li><a href="index.html#contact">Contact</a></li>
                 </ul>
             </div>
         </nav>
     </header>
-
-    <!-- Page Header -->
-    <section class="page-header">
-        <div class="container">
-            <h1>Blog & Actualités</h1>
-            <p>Découvrez nos dernières réalisations, actualités du secteur et conseils d'experts</p>
-        </div>
-    </section>
 
     <!-- Blog Filters -->
     <section class="blog-filters section-gray">
@@ -275,41 +304,49 @@
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section footer-logo-section">
-                    <img src="images/logo1.png" alt="JS Industrie" class="footer-logo">
-                    <p>Expert en chaudronnerie industrielle depuis plus de 10 ans.</p>
+        <div class="footer-cta">
+            <div class="container">
+                <h2 class="footer-title">
+                    <span>Chaudronnerie</span>, <span>Métallerie</span> et <span>Tuyauterie</span> Industrielle
+                </h2>
+                <p class="footer-text">
+                    Pour en savoir plus sur les nombreuses possibilités de <strong>fabrication sur mesure</strong> ou pour demander un <strong>devis</strong> en <strong>chaudronnerie</strong>, <strong>tuyauterie</strong>, <strong>soudure</strong> et <strong>métallerie</strong>, merci de prendre contact avec <strong>JS Industrie</strong> par téléphone au <a href="tel:0609170826">06 09 17 08 26</a> ou par <a href="index.html#contact">mail</a>.
+                </p>
+            </div>
+        </div>
+
+        <div class="footer-contact">
+            <div class="container footer-contact-grid">
+                <div class="footer-contact-item">
+                    <p class="footer-phone"><a href="tel:0609170826">06 09 17 08 26</a></p>
+                    <p class="footer-email"><a href="mailto:contact@js-industrie.fr">contact@js-industrie.fr</a></p>
                 </div>
-                <div class="footer-section">
-                    <h4>Navigation</h4>
-                    <ul>
-                        <li><a href="index.html">Accueil</a></li>
-                        <li><a href="index.html#services">Services</a></li>
-                        <li><a href="index.html#realisations">Réalisations</a></li>
-                        <li><a href="blog.html">Blog</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Services</h4>
-                    <ul>
-                        <li><a href="index.html#services">Chaudronnerie</a></li>
-                        <li><a href="index.html#services">Tuyauterie</a></li>
-                        <li><a href="index.html#services">Structures métalliques</a></li>
-                        <li><a href="index.html#services">Finitions</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Contact</h4>
-                    <ul>
-                        <li>+33 X XX XX XX XX</li>
-                        <li>contact@js-industrie.fr</li>
-                        <li>Zone Industrielle</li>
-                    </ul>
+                <div class="footer-contact-item">
+                    <p class="footer-address">
+                        <strong>JS Industrie</strong><br>
+                        13 Rue Principale, 89140 Pont-sur-Yonne<br>
+                        France
+                    </p>
                 </div>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 JS Industrie - Tous droits réservés</p>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container">
+                <div class="footer-bottom-content">
+                    <div class="footer-logo">
+                        <img src="images/logo1.png" alt="JS Industrie">
+                    </div>
+                    <div class="footer-links">
+                        <ul>
+                            <li><a href="admin.html">Administration</a></li>
+                            <li><a href="#mentions">Mentions légales</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-copyright">
+                    <p>&copy; 2024 JS Industrie - Tous droits réservés</p>
+                </div>
             </div>
         </div>
     </footer>
