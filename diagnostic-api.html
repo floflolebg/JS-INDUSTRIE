@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnostic PHP API - JS Industrie</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #252526;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        h1 { color: #4ec9b0; }
+        h2 { color: #569cd6; margin-top: 30px; }
+        .box {
+            background: #1e1e1e;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #007acc;
+        }
+        .error { border-left-color: #f48771; background: #3a1e1e; }
+        .success { border-left-color: #4ec9b0; background: #1e3a2e; }
+        .warning { border-left-color: #dcdcaa; background: #3a3a1e; }
+        pre {
+            background: #1e1e1e;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            border: 1px solid #3c3c3c;
+            color: #ce9178;
+        }
+        button {
+            background: #0e639c;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            font-family: inherit;
+        }
+        button:hover { background: #1177bb; }
+        .code { color: #ce9178; }
+        .key { color: #9cdcfe; }
+        .value { color: #ce9178; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Diagnostic PHP - blog-api.php</h1>
+
+        <div class="box warning">
+            <strong>⚠️ Problème détecté :</strong> blog-api.php retourne HTTP 400<br>
+            Cela signifie qu'il y a une erreur PHP qui empêche l'API de fonctionner.
+        </div>
+
+        <h2>📋 Tests disponibles</h2>
+        <button onclick="testRawResponse()">1. Voir la réponse brute</button>
+        <button onclick="testWithParams()">2. Tester avec ?action=list</button>
+        <button onclick="testHeaders()">3. Voir les headers HTTP</button>
+        <button onclick="checkPHPVersion()">4. Vérifier version PHP</button>
+
+        <div id="results"></div>
+    </div>
+
+    <script>
+        // Test 1: Réponse brute
+        async function testRawResponse() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<h2>Test 1: Réponse brute de blog-api.php</h2>';
+
+            try {
+                const response = await fetch('blog-api.php', {
+                    method: 'GET',
+                    cache: 'no-cache'
+                });
+
+                results.innerHTML += `
+                    <div class="box ${response.ok ? 'success' : 'error'}">
+                        <strong>Status HTTP:</strong> ${response.status} ${response.statusText}<br>
+                        <strong>Content-Type:</strong> ${response.headers.get('content-type')}
+                    </div>
+                `;
+
+                const text = await response.text();
+
+                results.innerHTML += `
+                    <div class="box">
+                        <strong>Réponse complète (${text.length} caractères):</strong>
+                        <pre>${escapeHtml(text)}</pre>
+                    </div>
+                `;
+
+                // Essayer de parser comme JSON
+                try {
+                    const json = JSON.parse(text);
+                    results.innerHTML += `
+                        <div class="box success">
+                            <strong>✅ JSON valide:</strong>
+                            <pre>${JSON.stringify(json, null, 2)}</pre>
+                        </div>
+                    `;
+                } catch (e) {
+                    results.innerHTML += `
+                        <div class="box error">
+                            <strong>❌ JSON invalide:</strong> ${e.message}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                results.innerHTML += `
+                    <div class="box error">
+                        <strong>❌ Erreur réseau:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Test 2: Avec paramètres
+        async function testWithParams() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<h2>Test 2: blog-api.php?action=list</h2>';
+
+            try {
+                const response = await fetch('blog-api.php?action=list', {
+                    method: 'GET',
+                    cache: 'no-cache'
+                });
+
+                results.innerHTML += `
+                    <div class="box ${response.ok ? 'success' : 'error'}">
+                        <strong>Status HTTP:</strong> ${response.status} ${response.statusText}<br>
+                        <strong>Content-Type:</strong> ${response.headers.get('content-type')}
+                    </div>
+                `;
+
+                const text = await response.text();
+
+                results.innerHTML += `
+                    <div class="box">
+                        <strong>Réponse (${text.length} caractères):</strong>
+                        <pre>${escapeHtml(text.substring(0, 2000))}${text.length > 2000 ? '\n... (tronqué)' : ''}</pre>
+                    </div>
+                `;
+
+                try {
+                    const json = JSON.parse(text);
+                    results.innerHTML += `
+                        <div class="box success">
+                            <strong>✅ JSON parsé avec succès:</strong>
+                            <pre>${JSON.stringify(json, null, 2)}</pre>
+                        </div>
+                    `;
+                } catch (e) {
+                    results.innerHTML += `
+                        <div class="box error">
+                            <strong>❌ Impossible de parser le JSON:</strong> ${e.message}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                results.innerHTML += `
+                    <div class="box error">
+                        <strong>❌ Erreur:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Test 3: Headers HTTP
+        async function testHeaders() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<h2>Test 3: Headers HTTP de blog-api.php</h2>';
+
+            try {
+                const response = await fetch('blog-api.php?action=list', {
+                    method: 'GET',
+                    cache: 'no-cache'
+                });
+
+                results.innerHTML += '<div class="box"><strong>Headers de réponse:</strong><br><br>';
+
+                response.headers.forEach((value, key) => {
+                    results.innerHTML += `<span class="key">${key}:</span> <span class="value">${value}</span><br>`;
+                });
+
+                results.innerHTML += '</div>';
+            } catch (error) {
+                results.innerHTML += `
+                    <div class="box error">
+                        <strong>❌ Erreur:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Test 4: Version PHP
+        async function checkPHPVersion() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<h2>Test 4: Version PHP</h2>';
+
+            try {
+                const response = await fetch('test-php-version.php', {
+                    method: 'GET',
+                    cache: 'no-cache'
+                });
+
+                if (response.ok) {
+                    const text = await response.text();
+                    results.innerHTML += `
+                        <div class="box">
+                            <pre>${escapeHtml(text)}</pre>
+                        </div>
+                    `;
+                } else {
+                    results.innerHTML += `
+                        <div class="box warning">
+                            <strong>⚠️ Créez le fichier test-php-version.php avec ce contenu:</strong>
+                            <pre>&lt;?php
+echo "Version PHP: " . phpversion() . "\\n";
+echo "OS: " . PHP_OS . "\\n";
+echo "Extensions: " . implode(", ", get_loaded_extensions());
+?&gt;</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                results.innerHTML += `
+                    <div class="box error">
+                        <strong>❌ Erreur:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Lancement automatique au chargement
+        window.addEventListener('load', () => {
+            testWithParams();
+        });
+    </script>
+</body>
+</html>
