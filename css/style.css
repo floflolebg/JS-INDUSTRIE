@@ -205,6 +205,20 @@ body {
     border-radius: 3px;
 }
 
+/* Animation du menu hamburger vers croix */
+.nav-toggle.open span:nth-child(1) {
+    transform: rotate(-45deg) translate(-6px, 7px);
+}
+
+.nav-toggle.open span:nth-child(2) {
+    opacity: 0;
+    transform: translateX(-20px);
+}
+
+.nav-toggle.open span:nth-child(3) {
+    transform: rotate(45deg) translate(-6px, -7px);
+}
+
 .nav-menu {
     list-style: none;
     display: flex;
@@ -846,6 +860,13 @@ body {
    Responsive Design - Mobile Large (968px)
    =================================== */
 @media (max-width: 968px) {
+    .main-navigation {
+        position: sticky;
+        top: 0;
+        z-index: 999;
+        background-color: var(--primary-color);
+    }
+
     .nav-toggle {
         display: flex;
     }
@@ -947,17 +968,33 @@ body {
 
     .header-content {
         flex-direction: column;
-        min-height: 300px !important;
+        min-height: auto !important;
     }
 
     .header-logo-section {
-        flex: 1;
+        flex: 0 0 auto;
         width: 100%;
-        padding: 20px;
+        padding: 25px 20px;
+        background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+        border-bottom: 3px solid var(--secondary-color);
+    }
+
+    .main-logo {
+        max-width: 180px;
     }
 
     .header-slider-section {
-        min-height: 200px !important;
+        min-height: 280px !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .header-slider-section h1 {
+        font-size: 1.6rem !important;
+        padding: 0 25px;
+        text-align: center;
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
     }
 
     .intro-container {
@@ -1011,13 +1048,23 @@ body {
         padding: 0 20px;
     }
 
+    .top-contact-bar {
+        padding: 12px 0;
+    }
+
     .top-contact-container {
-        flex-direction: column;
-        gap: 10px;
+        flex-direction: row;
+        justify-content: space-around;
+        gap: 15px;
     }
 
     .top-contact-item {
-        min-width: 100%;
+        min-width: auto;
+        flex: 0 1 auto;
+    }
+
+    .top-contact-item:first-child {
+        display: none;
     }
 
     .top-contact-item p {
@@ -1028,24 +1075,48 @@ body {
         font-size: 1.1rem;
     }
 
+    .top-contact-border {
+        padding: 8px 15px;
+    }
+
     .header-content {
-        min-height: 250px !important;
+        min-height: auto !important;
+    }
+
+    .main-logo {
+        max-width: 150px;
     }
 
     .header-slider-section {
-        min-height: 150px !important;
+        min-height: 220px !important;
     }
 
     .header-slider-section h1 {
-        font-size: 2rem !important;
+        font-size: 1.35rem !important;
+        padding: 0 20px;
+    }
+
+    .intro-section {
+        padding: 40px 0;
     }
 
     .intro-title {
-        font-size: 1.8rem;
+        font-size: 1.65rem;
+        line-height: 1.4;
     }
 
     .intro-text {
         font-size: 1rem;
+        line-height: 1.7;
+    }
+
+    .intro-left {
+        padding-bottom: 25px;
+        margin-bottom: 25px;
+    }
+
+    .intro-right {
+        padding-left: 0;
     }
 
     .cta-title {
