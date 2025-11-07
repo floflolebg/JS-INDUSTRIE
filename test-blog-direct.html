@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Direct Blog.js</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        #debug {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #1e1e1e;
+            color: #4ec9b0;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            z-index: 10000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        #debug h3 { color: #569cd6; margin-top: 0; }
+        .log-success { color: #4ec9b0; }
+        .log-error { color: #f48771; }
+        .log-warning { color: #dcdcaa; }
+        .log-info { color: #9cdcfe; }
+    </style>
+</head>
+<body>
+    <div id="debug">
+        <h3>🔍 Debug Blog.js</h3>
+        <div id="logs"></div>
+    </div>
+
+    <!-- Section Blog Filters (copié de blog.html) -->
+    <section class="blog-filters section-gray">
+        <div class="container">
+            <h2 style="text-align: center; margin-bottom: 20px;">Test Chargement Articles</h2>
+            <div class="filters">
+                <button class="filter-btn active" data-category="all">Tous les articles</button>
+                <button class="filter-btn" data-category="actualites">Actualités</button>
+                <button class="filter-btn" data-category="projets">Projets</button>
+                <button class="filter-btn" data-category="technique">Technique</button>
+                <button class="filter-btn" data-category="securite">Sécurité</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Blog Articles -->
+    <section class="blog-section section">
+        <div class="container">
+            <div class="blog-grid-full">
+                <!-- Les articles seront chargés ici par blog.js -->
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Logger custom
+        const logEl = document.getElementById('logs');
+        const originalConsole = {
+            log: console.log,
+            error: console.error,
+            warn: console.warn
+        };
+
+        function log(type, ...args) {
+            const msg = args.map(a => typeof a === 'object' ? JSON.stringify(a) : a).join(' ');
+            const timestamp = new Date().toLocaleTimeString();
+            logEl.innerHTML += `<div class="log-${type}">[${timestamp}] ${msg}</div>`;
+            logEl.scrollTop = logEl.scrollHeight;
+            originalConsole[type](...args);
+        }
+
+        console.log = (...args) => log('info', ...args);
+        console.error = (...args) => log('error', ...args);
+        console.warn = (...args) => log('warning', ...args);
+
+        console.log('✅ Page chargée');
+        console.log('✅ CSS chargé');
+
+        // Vérifier que les éléments existent
+        const blogGridFull = document.querySelector('.blog-grid-full');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+
+        console.log(`✅ .blog-grid-full trouvé: ${!!blogGridFull}`);
+        console.log(`✅ Boutons filtres trouvés: ${filterBtns.length}`);
+    </script>
+
+    <!-- Charger blog.js APRÈS le DOM -->
+    <script src="js/blog.js"></script>
+
+    <script>
+        // Attendre que blog.js charge
+        setTimeout(() => {
+            console.log('🔄 Vérification après chargement blog.js...');
+
+            const gridContent = document.querySelector('.blog-grid-full').innerHTML;
+            if (gridContent.trim().length > 0) {
+                console.log('✅ Articles chargés! Longueur HTML: ' + gridContent.length);
+            } else {
+                console.error('❌ .blog-grid-full est vide!');
+            }
+        }, 2000);
+
+        // Test manuel de l'API
+        console.log('🔄 Test manuel de l\'API...');
+        fetch('blog-api.php?action=list')
+            .then(r => {
+                console.log(`✅ API répond: ${r.status} ${r.statusText}`);
+                return r.json();
+            })
+            .then(data => {
+                console.log(`✅ JSON parsé: success=${data.success}, articles=${data.articles?.length || 0}`);
+                if (data.success && data.articles) {
+                    console.log('✅ Premier article:', data.articles[0]?.title);
+                }
+            })
+            .catch(err => {
+                console.error('❌ Erreur API:', err.message);
+            });
+    </script>
+</body>
+</html>
